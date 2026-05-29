@@ -104,6 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Default missing structural fields
                 if (!p["Component Type"]) p["Component Type"] = "Unknown";
                 if (!p["Status"]) p["Status"] = "In Stock";
+                if (!p["Image URL"]) p["Image URL"] = "";
                 
                 // Extract price as float (e.g. "120.00 JOD" -> 120.0, or raw number 120 -> 120.0)
                 let priceVal = 0.0;
@@ -402,6 +403,15 @@ document.addEventListener("DOMContentLoaded", () => {
                         <span class="card-category-badge">${product.category_key}</span>
                     </div>
                     
+                    <div class="card-image-wrapper">
+                        ${product["Image URL"] ? `
+                            <img class="card-image" src="${product["Image URL"]}" alt="${product["Full Name"]}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        ` : ''}
+                        <div class="card-image-fallback" style="${product["Image URL"] ? 'display: none;' : 'display: flex;'}">
+                            <i class="fa-solid ${CATEGORY_MAP[product.category_key]?.icon || 'fa-microchip'} fallback-icon"></i>
+                        </div>
+                    </div>
+                    
                     <div class="card-middle">
                         <h4 class="card-title" title="${product["Full Name"]}">${cardTitle}</h4>
                         <div class="card-stock-row">
@@ -596,6 +606,7 @@ document.addEventListener("DOMContentLoaded", () => {
         
         // Clean table columns except the first label cells
         const headerRow = document.getElementById("compare-row-headers");
+        const imageRow = document.getElementById("compare-row-image");
         const storeRow = document.getElementById("compare-row-store");
         const categoryRow = document.getElementById("compare-row-category");
         const nameRow = document.getElementById("compare-row-name");
@@ -604,6 +615,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const actionRow = document.getElementById("compare-row-action");
         
         headerRow.innerHTML = '<th class="attr-header">Attributes</th>';
+        imageRow.innerHTML = '<td class="attr-label">Product Image</td>';
         storeRow.innerHTML = '<td class="attr-label">Store Origin</td>';
         categoryRow.innerHTML = '<td class="attr-label">Category</td>';
         nameRow.innerHTML = '<td class="attr-label">Component Name</td>';
@@ -619,7 +631,29 @@ document.addEventListener("DOMContentLoaded", () => {
             
             const isOutOfStock = item.Status !== "In Stock";
             
+            // Image cell injection
+            let compareImageHTML = "";
+            if (item["Image URL"]) {
+                compareImageHTML = `
+                    <div class="compare-image-wrapper">
+                        <img class="compare-image" src="${item["Image URL"]}" alt="${item["Full Name"]}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="compare-image-fallback" style="display:none;">
+                            <i class="fa-solid ${CATEGORY_MAP[item.category_key]?.icon || 'fa-microchip'} fallback-icon"></i>
+                        </div>
+                    </div>
+                `;
+            } else {
+                compareImageHTML = `
+                    <div class="compare-image-wrapper">
+                        <div class="compare-image-fallback">
+                            <i class="fa-solid ${CATEGORY_MAP[item.category_key]?.icon || 'fa-microchip'} fallback-icon"></i>
+                        </div>
+                    </div>
+                `;
+            }
+            
             headerRow.insertAdjacentHTML("beforeend", `<th class="compare-col-header">${item["Full Name"].substring(0, 40)}...</th>`);
+            imageRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell cell-image-cell">${compareImageHTML}</td>`);
             storeRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell"><span class="card-store-badge ${storeBadge}">${item["Website Name"]}</span></td>`);
             categoryRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell" style="font-weight:600;">${item.category_key}</td>`);
             nameRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell" style="font-size:0.85rem;text-align:left;">${item["Full Name"]}</td>`);
