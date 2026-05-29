@@ -1369,3 +1369,36 @@ body {
         justify-content: space-between;
     }
 }
+
+/* ================= FOOTER SECTION ================= */
+.app-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    margin-top: 30px;
+    margin-bottom: 90px; /* Space for the floating compare tray */
+    text-align: center;
+    background: rgba(18, 22, 36, 0.4);
+    border: 1px solid var(--border-glass);
+    border-radius: 18px;
+    backdrop-filter: blur(10px);
+}
+
+.app-footer p {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+}
+
+.app-footer p span.footer-highlight {
+    color: var(--neon-cyan);
+    text-shadow: 0 0 8px rgba(0, 255, 204, 0.3);
+    font-weight: 600;
+}
+
+.app-footer p span.creator-highlight {
+    color: var(--neon-violet);
+    text-shadow: 0 0 8px rgba(139, 92, 246, 0.3);
+    font-weight: 600;
+}
