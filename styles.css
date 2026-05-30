@@ -681,6 +681,9 @@ body {
 .card-igeek::before { background: linear-gradient(90deg, var(--neon-violet), transparent); }
 .card-citycenter::before { background: linear-gradient(90deg, #3b82f6, transparent); }
 .card-osjo::before { background: linear-gradient(90deg, #d97706, transparent); }
+.card-pccircle::before { background: linear-gradient(90deg, var(--neon-cyan), transparent); }
+.card-taipei::before { background: linear-gradient(90deg, #ff007f, transparent); }
+.card-mcc::before { background: linear-gradient(90deg, #10b981, transparent); }
 
 .card-top {
     display: flex;
@@ -700,6 +703,10 @@ body {
 .badge-igeek { background: rgba(139, 92, 246, 0.12); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.2); }
 .badge-citycenter { background: rgba(59, 130, 246, 0.12); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.2); }
 .badge-osjo { background: rgba(217, 119, 6, 0.12); color: #f59e0b; border: 1px solid rgba(217, 119, 6, 0.2); }
+.badge-pccircle { background: rgba(0, 255, 204, 0.12); color: #00ffcc; border: 1px solid rgba(0, 255, 204, 0.2); }
+.badge-taipei { background: rgba(255, 0, 127, 0.12); color: #ff007f; border: 1px solid rgba(255, 0, 127, 0.2); }
+.badge-mcc { background: rgba(16, 185, 129, 0.12); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
+
 
 .card-category-badge {
     font-size: 0.7rem;
@@ -1468,6 +1475,22 @@ body {
     color: #fbbf24;
     filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.45));
 }
+
+.card-pccircle .fallback-icon {
+    color: var(--neon-cyan);
+    filter: drop-shadow(0 0 10px rgba(0, 255, 204, 0.45));
+}
+
+.card-taipei .fallback-icon {
+    color: #ff007f;
+    filter: drop-shadow(0 0 10px rgba(255, 0, 127, 0.45));
+}
+
+.card-mcc .fallback-icon {
+    color: #10b981;
+    filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.45));
+}
+
 
 /* ================= COMPARISON TABLE IMAGE ROW STYLES ================= */
 #compare-row-image {

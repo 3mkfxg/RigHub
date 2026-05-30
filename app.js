@@ -7,16 +7,16 @@ document.addEventListener("DOMContentLoaded", () => {
     let allProducts = [];
     let filteredProducts = [];
     let comparedProducts = [];
-    
+
     let currentPage = 1;
     const itemsPerPage = 12;
-    
+
     let selectedCategory = "all";
-    let selectedStores = ["iGeek.jo", "City Center", "Oriental Store"];
+    let selectedStores = ["iGeek.jo", "City Center", "Oriental Store", "PC Circle", "Taipei Computer", "MCC Jordan"];
     let stockOnly = false;
     let searchQuery = "";
     let sortBy = "price-asc";
-    
+
     let dataPriceMin = 0;
     let dataPriceMax = 2500;
     let currentFilterMin = 0;
@@ -25,7 +25,16 @@ document.addEventListener("DOMContentLoaded", () => {
     // Category details with specific icons mapping
     const CATEGORY_MAP = {
         "Monitor": { label: "Monitors", icon: "fa-desktop" },
-        "Monitor Arm": { label: "Monitor Arms", icon: "fa-dolly" }
+        "Monitor Arm": { label: "Monitor Arms", icon: "fa-dolly" },
+        "GPU": { label: "Graphics Cards", icon: "fa-server" },
+        "Processor": { label: "Processors (CPU)", icon: "fa-microchip" },
+        "Motherboard": { label: "Motherboards", icon: "fa-chess-board" },
+        "RAM": { label: "Memory (RAM)", icon: "fa-memory" },
+        "SSD": { label: "SSDs (M.2/SATA)", icon: "fa-database" },
+        "Hard Disk": { label: "Hard Disks (HDD)", icon: "fa-hdd" },
+        "Case": { label: "PC Cases", icon: "fa-box" },
+        "PSU": { label: "Power Supplies", icon: "fa-plug" },
+        "Fan": { label: "Fans & Coolers", icon: "fa-fan" }
     };
 
     // DOM ELEMENTS
@@ -43,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const stockToggle = document.getElementById("stock-only-toggle");
     const sortSelect = document.getElementById("sort-select");
     const btnResetFilters = document.getElementById("btn-reset-filters");
-    
+
     // Stats elements
     const statTotal = document.getElementById("stat-total-products");
     const statIgeek = document.getElementById("stat-igeek-count");
@@ -51,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const statOsjo = document.getElementById("stat-osjo-count");
     const resultsCountText = document.getElementById("results-count-text");
     const activeChipsContainer = document.getElementById("active-chips-container");
-    
+
     // Compare UI elements
     const compareTray = document.getElementById("compare-tray");
     const compareTrayToggle = document.getElementById("compare-tray-toggle");
@@ -60,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnTriggerCompare = document.getElementById("btn-trigger-compare");
     const btnClearCompareAll = document.getElementById("btn-clear-compare-all");
     const compareCountBadge = document.getElementById("compare-count");
-    
+
     // Compare Modal elements
     const compareModal = document.getElementById("compare-modal");
     const btnCloseCompareModal = document.getElementById("btn-close-compare-modal");
@@ -70,65 +79,51 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             let response;
             try {
-                // Try current directory first (e.g. deployed to GitHub Pages with XLSX in same folder)
-                response = await fetch("pc_components_results.xlsx");
+                // Try current directory first (JSON database)
+                response = await fetch("products.json");
                 if (!response.ok) throw new Error("Not found in current folder");
             } catch (e) {
-                // Fall back to parent directory (e.g. testing locally with web folder contents)
-                response = await fetch("../pc_components_results.xlsx");
+                // Fall back to parent directory (JSON database)
+                response = await fetch("../web/products.json");
                 if (!response.ok) {
-                    throw new Error("Could not find 'pc_components_results.xlsx' in current or parent folder.");
+                    response = await fetch("web/products.json");
+                    if (!response.ok) {
+                        throw new Error("Could not find 'products.json' in current or fallback folders.");
+                    }
                 }
             }
-            
-            const arrayBuffer = await response.arrayBuffer();
-            const data = new Uint8Array(arrayBuffer);
-            const workbook = XLSX.read(data, { type: "array" });
-            
-            // Access the first worksheet
-            const sheetName = workbook.SheetNames[0];
-            const worksheet = workbook.Sheets[sheetName];
-            
-            // Convert worksheet to JSON rows
-            const sheetData = XLSX.utils.sheet_to_json(worksheet);
-            
+
+            const sheetData = await response.json();
+
             // Clean up fields and parse prices
             allProducts = sheetData.map(p => {
                 // Default missing structural fields
                 if (!p["Component Type"]) p["Component Type"] = "Unknown";
                 if (!p["Status"]) p["Status"] = "In Stock";
                 if (!p["Image URL"]) p["Image URL"] = "";
-                
-                // Extract price as float (e.g. "120.00 JOD" -> 120.0, or raw number 120 -> 120.0)
-                let priceVal = 0.0;
-                if (p["Price"] !== undefined && p["Price"] !== null) {
-                    const cleaned = String(p["Price"]).replace(/,/g, "").trim();
-                    const numbers = cleaned.match(/[-+]?\d*\.\d+|\d+/);
-                    if (numbers) {
-                        priceVal = parseFloat(numbers[0]);
-                    }
-                }
-                p.price_val = priceVal;
-                
-                // Standardize category labels & safe specs mapping
-                p.screen_size = p["Screen Size (Inches)"] || null;
-                p.refresh_rate = p["Refresh Rate (Hz)"] || null;
-                p.response_time = p["Response Time (ms)"] || null;
-                p.arms_supported = p["Arms Supported"] || null;
-                p.weight_support = p["Weight Support (kg)"] || null;
 
-                if (p["Component Type"] === "Monitor") p.category_key = "Monitor";
-                else if (p["Component Type"] === "Monitor Arm") p.category_key = "Monitor Arm";
-                else p.category_key = "Unknown";
+                // Map attributes dynamically
+                p.price_val = p.price_val || 0.0;
+                p.screen_size = p.screen_size || null;
+                p.refresh_rate = p.refresh_rate || null;
+                p.response_time = p.response_time || null;
+                p.arms_supported = p.arms_supported || null;
+                p.weight_support = p.weight_support || null;
+
+                if (CATEGORY_MAP[p["Component Type"]]) {
+                    p.category_key = p["Component Type"];
+                } else {
+                    p.category_key = "Unknown";
+                }
                 return p;
             });
-            
-            console.log(`Loaded ${allProducts.length} items successfully from Excel.`);
-            
+
+            console.log(`Loaded ${allProducts.length} items successfully from JSON.`);
+
             compileMetadata();
             initializeFilterUI();
             applyFiltersAndSorting();
-            
+
         } catch (error) {
             console.error("Initialization Error: ", error);
             gridContainer.innerHTML = `
@@ -136,7 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <i class="fa-solid fa-triangle-exclamation"></i>
                     <h3>Data Sync Error</h3>
                     <p>${error.message}</p>
-                    <p style="font-size:0.85rem;color:var(--text-muted);">Please make sure you have placed 'pc_components_results.xlsx' in your root repository folder or 'web' folder.</p>
+                    <p style="font-size:0.85rem;color:var(--text-muted);">Please make sure you have placed and exported 'products.json' in your web directory.</p>
                 </div>
             `;
         }
@@ -147,34 +142,47 @@ document.addEventListener("DOMContentLoaded", () => {
         let countIgeek = 0;
         let countCity = 0;
         let countOsjo = 0;
-        
+        let countPcCircle = 0;
+        let countTaipei = 0;
+        let countMcc = 0;
+
         let minPrice = Infinity;
         let maxPrice = -Infinity;
-        
+
         allProducts.forEach(p => {
             // Count per store
             const store = p["Website Name"];
             if (store === "iGeek.jo") countIgeek++;
             else if (store === "City Center") countCity++;
             else if (store === "Oriental Store") countOsjo++;
-            
+            else if (store === "PC Circle") countPcCircle++;
+            else if (store === "Taipei Computer") countTaipei++;
+            else if (store === "MCC Jordan") countMcc++;
+
             // Min/max prices
             if (p.price_val > 0) {
                 if (p.price_val < minPrice) minPrice = p.price_val;
                 if (p.price_val > maxPrice) maxPrice = p.price_val;
             }
         });
-        
+
         dataPriceMin = Math.floor(minPrice === Infinity ? 0 : minPrice);
         dataPriceMax = Math.ceil(maxPrice === -Infinity ? 1000 : maxPrice);
         currentFilterMin = dataPriceMin;
         currentFilterMax = dataPriceMax;
-        
+
         // Update stats widgets
         statTotal.textContent = allProducts.length.toLocaleString();
         statIgeek.textContent = countIgeek.toLocaleString();
         statCity.textContent = countCity.toLocaleString();
         statOsjo.textContent = countOsjo.toLocaleString();
+        
+        const badgePcCircle = document.getElementById("stat-pccircle-count");
+        const badgeTaipei = document.getElementById("stat-taipei-count");
+        const badgeMcc = document.getElementById("stat-mcc-count");
+        if (badgePcCircle) badgePcCircle.textContent = countPcCircle.toLocaleString();
+        if (badgeTaipei) badgeTaipei.textContent = countTaipei.toLocaleString();
+        if (badgeMcc) badgeMcc.textContent = countMcc.toLocaleString();
     }
 
     function initializeFilterUI() {
@@ -184,7 +192,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <i class="fa-solid fa-border-all"></i> All Parts
             </button>
         `;
-        
+
         Object.keys(CATEGORY_MAP).forEach(key => {
             const cat = CATEGORY_MAP[key];
             categoryGridHTML += `
@@ -193,9 +201,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 </button>
             `;
         });
-        
+
         categoryFilterList.innerHTML = categoryGridHTML;
-        
+
         // Add Category Click Event Listeners
         const categoryButtons = document.querySelectorAll(".btn-category");
         categoryButtons.forEach(btn => {
@@ -207,19 +215,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 applyFiltersAndSorting();
             });
         });
-        
+
         // 2. Set up Double Price Slider inputs
         priceMinInput.value = dataPriceMin;
         priceMaxInput.value = dataPriceMax;
-        
+
         sliderMin.min = dataPriceMin;
         sliderMin.max = dataPriceMax;
         sliderMin.value = dataPriceMin;
-        
+
         sliderMax.min = dataPriceMin;
         sliderMax.max = dataPriceMax;
         sliderMax.value = dataPriceMax;
-        
+
         updateSliderTrack();
     }
 
@@ -229,34 +237,34 @@ document.addEventListener("DOMContentLoaded", () => {
         filteredProducts = allProducts.filter(p => {
             // Check Store origin
             if (!selectedStores.includes(p["Website Name"])) return false;
-            
+
             // Check Component Category
             if (selectedCategory !== "all" && p.category_key !== selectedCategory) return false;
-            
+
             // Check Stock status
             if (stockOnly && p.Status !== "In Stock") return false;
-            
+
             // Check Price boundaries
             if (p.price_val < currentFilterMin || p.price_val > currentFilterMax) return false;
-            
+
             // Check Search query
             if (searchQuery) {
                 const titleLower = p["Full Name"].toLowerCase();
                 const catLower = p["Component Type"].toLowerCase();
                 const storeLower = p["Website Name"].toLowerCase();
                 const terms = searchQuery.toLowerCase().split(/\s+/);
-                
+
                 // All typed terms must match either name, category, or store
-                return terms.every(term => 
-                    titleLower.includes(term) || 
-                    catLower.includes(term) || 
+                return terms.every(term =>
+                    titleLower.includes(term) ||
+                    catLower.includes(term) ||
                     storeLower.includes(term)
                 );
             }
-            
+
             return true;
         });
-        
+
         // 2. Apply active sorting choice
         if (sortBy === "price-asc") {
             filteredProducts.sort((a, b) => a.price_val - b.price_val);
@@ -267,7 +275,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } else if (sortBy === "category") {
             filteredProducts.sort((a, b) => a.category_key.localeCompare(b.category_key));
         }
-        
+
         // 3. Update Result widgets
         resultsCountText.innerHTML = `Found <span style="color:var(--neon-cyan);">${filteredProducts.length}</span> components matching filters`;
         renderChips();
@@ -277,28 +285,28 @@ document.addEventListener("DOMContentLoaded", () => {
     // Renders tags at the top showing current active filtering choices
     function renderChips() {
         let chipsHTML = "";
-        
+
         if (selectedCategory !== "all") {
             const label = CATEGORY_MAP[selectedCategory]?.label || selectedCategory;
             chipsHTML += `<span class="filter-chip" id="chip-cat"><i class="fa-solid fa-microchip"></i> Category: ${label} <i class="fa-solid fa-xmark"></i></span>`;
         }
-        
+
         if (selectedStores.length < 3) {
             selectedStores.forEach(s => {
                 chipsHTML += `<span class="filter-chip" data-store="${s}"><i class="fa-solid fa-store"></i> ${s} <i class="fa-solid fa-xmark"></i></span>`;
             });
         }
-        
+
         if (stockOnly) {
             chipsHTML += `<span class="filter-chip" id="chip-stock"><i class="fa-solid fa-circle-check"></i> In Stock <i class="fa-solid fa-xmark"></i></span>`;
         }
-        
+
         if (currentFilterMin > dataPriceMin || currentFilterMax < dataPriceMax) {
             chipsHTML += `<span class="filter-chip" id="chip-price"><i class="fa-solid fa-coins"></i> ${currentFilterMin}JOD - ${currentFilterMax}JOD <i class="fa-solid fa-xmark"></i></span>`;
         }
-        
+
         activeChipsContainer.innerHTML = chipsHTML;
-        
+
         // Add click events to remove individual filters
         const chips = activeChipsContainer.querySelectorAll(".filter-chip");
         chips.forEach(chip => {
@@ -339,7 +347,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // ================= 3. DOM RENDERING LOGIC =================
     function renderProductsCatalog() {
         gridContainer.innerHTML = "";
-        
+
         if (filteredProducts.length === 0) {
             gridContainer.innerHTML = `
                 <div class="catalog-empty-state">
@@ -351,18 +359,18 @@ document.addEventListener("DOMContentLoaded", () => {
             paginationPanel.innerHTML = "";
             return;
         }
-        
+
         // Pagination slicing
         const startIndex = (currentPage - 1) * itemsPerPage;
         const endIndex = Math.min(startIndex + itemsPerPage, filteredProducts.length);
         const pageItems = filteredProducts.slice(startIndex, endIndex);
-        
+
         pageItems.forEach((product, index) => {
             const isCompared = comparedProducts.some(p => p.URL === product.URL);
-            
+
             // Clean up Name formatting
             let cardTitle = product["Full Name"];
-            
+
             // Search highlighting logic
             if (searchQuery) {
                 const terms = searchQuery.toLowerCase().split(/\s+/);
@@ -373,10 +381,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 });
             }
-            
+
             const isOutOfStock = product.Status !== "In Stock";
             const priceText = product.Price || `${product.price_val.toFixed(2)} JOD`;
-            
+
             // Determine dynamic store classes
             let storeClass = "card-igeek";
             let storeBadge = "badge-igeek";
@@ -386,8 +394,17 @@ document.addEventListener("DOMContentLoaded", () => {
             } else if (product["Website Name"] === "Oriental Store") {
                 storeClass = "card-osjo";
                 storeBadge = "badge-osjo";
+            } else if (product["Website Name"] === "PC Circle") {
+                storeClass = "card-pccircle";
+                storeBadge = "badge-pccircle";
+            } else if (product["Website Name"] === "Taipei Computer") {
+                storeClass = "card-taipei";
+                storeBadge = "badge-taipei";
+            } else if (product["Website Name"] === "MCC Jordan") {
+                storeClass = "card-mcc";
+                storeBadge = "badge-mcc";
             }
-            
+
             const cardHTML = `
                 <div class="product-card ${storeClass} glass-panel">
                     <div class="card-top">
@@ -417,7 +434,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         ` : (product.category_key === "Monitor Arm") ? `
                             <div class="card-specs-row">
                                 ${product.arms_supported ? `<span class="spec-pill spec-arms"><i class="fa-solid fa-circle-nodes"></i> ${product.arms_supported === 1 ? 'Single Arm' : product.arms_supported === 2 ? 'Dual Arm' : product.arms_supported === 3 ? 'Triple Arm' : product.arms_supported + ' Arms'}</span>` : ''}
-                                ${product.weight_support ? `<span class="spec-pill spec-weight"><i class="fa-solid fa-weight-hanging"></i> Max ${product.weight_support}kg</span>` : ''}
+                                ${product.weight_support ? `<span class="spec-pill spec-weight"><i class="fa-solid fa-weight-hanging"></i> Max ${String(product.weight_support).toLowerCase().includes('kg') ? product.weight_support : product.weight_support + 'kg'}</span>` : ''}
                             </div>
                         ` : ''}
 
@@ -442,10 +459,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                 </div>
             `;
-            
+
             gridContainer.insertAdjacentHTML("beforeend", cardHTML);
         });
-        
+
         // Add compare toggle click handlers
         const compareBtns = gridContainer.querySelectorAll(".btn-card-compare");
         compareBtns.forEach(btn => {
@@ -455,16 +472,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 toggleCompareProduct(product, btn);
             });
         });
-        
+
         renderPaginationUI();
     }
 
     function renderPaginationUI() {
         paginationPanel.innerHTML = "";
         const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
-        
+
         if (totalPages <= 1) return;
-        
+
         // Previous Button
         const prevBtn = document.createElement("button");
         prevBtn.className = "btn-page";
@@ -476,7 +493,7 @@ document.addEventListener("DOMContentLoaded", () => {
             window.scrollTo({ top: gridContainer.offsetTop - 100, behavior: "smooth" });
         });
         paginationPanel.appendChild(prevBtn);
-        
+
         // Dynamic page indexes rendering (handling high page numbers with ellipses)
         let pageNumbers = [];
         if (totalPages <= 7) {
@@ -490,7 +507,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 pageNumbers = [1, "...", currentPage - 1, currentPage, currentPage + 1, "...", totalPages];
             }
         }
-        
+
         pageNumbers.forEach(page => {
             if (page === "...") {
                 const span = document.createElement("span");
@@ -509,7 +526,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 paginationPanel.appendChild(btn);
             }
         });
-        
+
         // Next Button
         const nextBtn = document.createElement("button");
         nextBtn.className = "btn-page";
@@ -526,7 +543,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // ================= 4. COMPARISON TRAY & MODAL LOGIC =================
     function toggleCompareProduct(product, btnElement) {
         const existingIdx = comparedProducts.findIndex(p => p.URL === product.URL);
-        
+
         if (existingIdx > -1) {
             // Already inside comparison tray, remove it
             comparedProducts.splice(existingIdx, 1);
@@ -542,27 +559,30 @@ document.addEventListener("DOMContentLoaded", () => {
             if (btnElement) btnElement.classList.add("active");
             showNotification(`Added '${product["Full Name"].substring(0, 30)}...' to comparison tray.`);
         }
-        
+
         updateCompareTrayUI();
     }
 
     function updateCompareTrayUI() {
         compareCountBadge.textContent = comparedProducts.length;
-        
+
         // Empty compare Slots container
         compareSlots.innerHTML = "";
-        
+
         for (let i = 0; i < 3; i++) {
             const product = comparedProducts[i];
             const slot = document.createElement("div");
-            
+
             if (product) {
                 slot.className = "compare-slot filled";
-                
+
                 let storeLabelClass = "badge-igeek";
                 if (product["Website Name"] === "City Center") storeLabelClass = "badge-citycenter";
                 else if (product["Website Name"] === "Oriental Store") storeLabelClass = "badge-osjo";
-                
+                else if (product["Website Name"] === "PC Circle") storeLabelClass = "badge-pccircle";
+                else if (product["Website Name"] === "Taipei Computer") storeLabelClass = "badge-taipei";
+                else if (product["Website Name"] === "MCC Jordan") storeLabelClass = "badge-mcc";
+
                 slot.innerHTML = `
                     <div class="slot-filled-content">
                         <span class="slot-title" title="${product["Full Name"]}">${product["Full Name"]}</span>
@@ -573,14 +593,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                     <button class="btn-remove-slot" data-index="${i}"><i class="fa-solid fa-xmark"></i></button>
                 `;
-                
+
                 slot.querySelector(".btn-remove-slot").addEventListener("click", (e) => {
                     e.stopPropagation();
                     comparedProducts.splice(i, 1);
                     updateCompareTrayUI();
                     renderProductsCatalog(); // Refresh grids active classes
                 });
-                
+
             } else {
                 slot.className = "compare-slot";
                 slot.innerHTML = `
@@ -589,17 +609,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                 `;
             }
-            
+
             compareSlots.appendChild(slot);
         }
-        
+
         // Slide up / Open comparison tray if at least 1 item is added
         if (comparedProducts.length > 0) {
             compareTray.classList.add("open");
         } else {
             compareTray.classList.remove("open");
         }
-        
+
         // Enable or disable Compare button
         if (comparedProducts.length >= 2) {
             btnTriggerCompare.removeAttribute("disabled");
@@ -610,7 +630,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function openCompareModal() {
         if (comparedProducts.length < 2) return;
-        
+
         // Clean table columns except the first label cells
         const headerRow = document.getElementById("compare-row-headers");
         const imageRow = document.getElementById("compare-row-image");
@@ -625,7 +645,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const weightRow = document.getElementById("compare-row-weight");
         const statusRow = document.getElementById("compare-row-status");
         const actionRow = document.getElementById("compare-row-action");
-        
+
         headerRow.innerHTML = '<th class="attr-header">Attributes</th>';
         imageRow.innerHTML = '<td class="attr-label">Product Image</td>';
         storeRow.innerHTML = '<td class="attr-label">Store Origin</td>';
@@ -639,15 +659,18 @@ document.addEventListener("DOMContentLoaded", () => {
         weightRow.innerHTML = '<td class="attr-label">Weight Capacity (kg)</td>';
         statusRow.innerHTML = '<td class="attr-label">Stock Status</td>';
         actionRow.innerHTML = '<td class="attr-label">Store Page</td>';
-        
+
         comparedProducts.forEach(item => {
             // Store badge class
             let storeBadge = "badge-igeek";
             if (item["Website Name"] === "City Center") storeBadge = "badge-citycenter";
             else if (item["Website Name"] === "Oriental Store") storeBadge = "badge-osjo";
-            
+            else if (item["Website Name"] === "PC Circle") storeBadge = "badge-pccircle";
+            else if (item["Website Name"] === "Taipei Computer") storeBadge = "badge-taipei";
+            else if (item["Website Name"] === "MCC Jordan") storeBadge = "badge-mcc";
+
             const isOutOfStock = item.Status !== "In Stock";
-            
+
             // Image cell injection
             let compareImageHTML = "";
             if (item["Image URL"]) {
@@ -668,26 +691,26 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                 `;
             }
-            
+
             headerRow.insertAdjacentHTML("beforeend", `<th class="compare-col-header">${item["Full Name"].substring(0, 40)}...</th>`);
             imageRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell cell-image-cell">${compareImageHTML}</td>`);
             storeRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell"><span class="card-store-badge ${storeBadge}">${item["Website Name"]}</span></td>`);
             categoryRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell" style="font-weight:600;">${item.category_key}</td>`);
             nameRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell" style="font-size:0.85rem;text-align:left;">${item["Full Name"]}</td>`);
             priceRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell cell-price">${item.Price}</td>`);
-            
+
             // Specialized specifications cells
             sizeRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell">${item.screen_size ? item.screen_size + '"' : 'N/A'}</td>`);
             hzRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell">${item.refresh_rate ? item.refresh_rate + 'Hz' : 'N/A'}</td>`);
             msRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell">${item.response_time ? item.response_time + 'ms' : 'N/A'}</td>`);
-            
+
             let armsLabel = 'N/A';
             if (item.arms_supported) {
                 armsLabel = item.arms_supported === 1 ? "1 (Single)" : item.arms_supported === 2 ? "2 (Dual)" : item.arms_supported === 3 ? "3 (Triple)" : item.arms_supported;
             }
             armsRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell">${armsLabel}</td>`);
             weightRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell">${item.weight_support ? item.weight_support + ' kg' : 'N/A'}</td>`);
-            
+
             statusRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell">
                 <span class="stock-text-${isOutOfStock ? "out" : "in"}">
                     <i class="fa-solid ${isOutOfStock ? "fa-circle-xmark" : "fa-circle-check"}"></i> ${item.Status}
@@ -699,16 +722,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 </a>
             </td>`);
         });
-        
+
         compareModal.classList.add("open");
     }
 
     // ================= 5. EVENT LISTENERS =================
-    
+
     // Toggle Compare Tray manually clicking header
     compareTrayToggle.addEventListener("click", () => {
         if (comparedProducts.length === 0) return;
-        
+
         if (compareTray.style.bottom === "0px" || compareTray.classList.contains("open")) {
             compareTray.classList.remove("open");
             trayChevron.className = "fa-solid fa-chevron-up";
@@ -724,17 +747,17 @@ document.addEventListener("DOMContentLoaded", () => {
         searchQuery = "";
         searchInput.value = "";
         btnClearSearch.style.display = "none";
-        
+
         // Reset Category
         selectedCategory = "all";
         const allCatBtn = categoryFilterList.querySelector('[data-category="all"]');
         categoryFilterList.querySelectorAll(".btn-category").forEach(b => b.classList.remove("active"));
         if (allCatBtn) allCatBtn.classList.add("active");
-        
+
         // Reset Stores Checkbox
-        selectedStores = ["iGeek.jo", "City Center", "Oriental Store"];
+        selectedStores = ["iGeek.jo", "City Center", "Oriental Store", "PC Circle", "Taipei Computer", "MCC Jordan"];
         storeFilters.forEach(cb => cb.checked = true);
-        
+
         // Reset Price
         currentFilterMin = dataPriceMin;
         currentFilterMax = dataPriceMax;
@@ -743,11 +766,11 @@ document.addEventListener("DOMContentLoaded", () => {
         sliderMin.value = dataPriceMin;
         sliderMax.value = dataPriceMax;
         updateSliderTrack();
-        
+
         // Reset Stock toggle
         stockOnly = false;
         stockToggle.checked = false;
-        
+
         currentPage = 1;
         applyFiltersAndSorting();
         showNotification("Filters have been completely reset.");
@@ -758,13 +781,13 @@ document.addEventListener("DOMContentLoaded", () => {
     searchInput.addEventListener("input", () => {
         clearTimeout(typingTimer);
         searchQuery = searchInput.value.trim();
-        
+
         if (searchQuery.length > 0) {
             btnClearSearch.style.display = "block";
         } else {
             btnClearSearch.style.display = "none";
         }
-        
+
         typingTimer = setTimeout(() => {
             currentPage = 1;
             applyFiltersAndSorting();
@@ -810,16 +833,16 @@ document.addEventListener("DOMContentLoaded", () => {
     sliderMin.addEventListener("input", () => {
         let val1 = parseInt(sliderMin.value);
         let val2 = parseInt(sliderMax.value);
-        
+
         if (val1 >= val2) {
             sliderMin.value = val2 - 10;
             val1 = val2 - 10;
         }
-        
+
         currentFilterMin = val1;
         priceMinInput.value = val1;
         updateSliderTrack();
-        
+
         clearTimeout(typingTimer);
         typingTimer = setTimeout(applyFiltersAndSorting, 150);
     });
@@ -827,16 +850,16 @@ document.addEventListener("DOMContentLoaded", () => {
     sliderMax.addEventListener("input", () => {
         let val1 = parseInt(sliderMin.value);
         let val2 = parseInt(sliderMax.value);
-        
+
         if (val2 <= val1) {
             sliderMax.value = val1 + 10;
             val2 = val1 + 10;
         }
-        
+
         currentFilterMax = val2;
         priceMaxInput.value = val2;
         updateSliderTrack();
-        
+
         clearTimeout(typingTimer);
         typingTimer = setTimeout(applyFiltersAndSorting, 150);
     });
@@ -846,7 +869,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let val = parseInt(priceMinInput.value);
         if (isNaN(val) || val < dataPriceMin) val = dataPriceMin;
         if (val >= currentFilterMax) val = currentFilterMax - 10;
-        
+
         currentFilterMin = val;
         sliderMin.value = val;
         updateSliderTrack();
@@ -857,7 +880,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let val = parseInt(priceMaxInput.value);
         if (isNaN(val) || val > dataPriceMax) val = dataPriceMax;
         if (val <= currentFilterMin) val = currentFilterMin + 10;
-        
+
         currentFilterMax = val;
         sliderMax.value = val;
         updateSliderTrack();
@@ -872,7 +895,7 @@ document.addEventListener("DOMContentLoaded", () => {
         renderProductsCatalog();
         showNotification("Cleared comparison slots.");
     });
-    
+
     // Close Compare modal
     btnCloseCompareModal.addEventListener("click", () => {
         compareModal.classList.remove("open");
@@ -903,7 +926,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <i class="fa-solid ${type === "error" ? "fa-circle-exclamation" : "fa-circle-info"}"></i>
             <span>${message}</span>
         `;
-        
+
         // CSS properties inject for dynamic toast alerts
         toast.style.position = "fixed";
         toast.style.top = "30px";
@@ -923,15 +946,15 @@ document.addEventListener("DOMContentLoaded", () => {
         toast.style.opacity = "0";
         toast.style.transform = "translateY(-20px)";
         toast.style.transition = "all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.15)";
-        
+
         document.body.appendChild(toast);
-        
+
         // Trigger show slide translation
         setTimeout(() => {
             toast.style.opacity = "1";
             toast.style.transform = "translateY(0)";
         }, 50);
-        
+
         // Slide hide translation and clear DOM
         setTimeout(() => {
             toast.style.opacity = "0";
