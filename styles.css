@@ -1510,3 +1510,50 @@ body {
 .compare-image-wrapper .fallback-icon {
     font-size: 2rem;
 }
+
+/* ================= PRODUCT SPEC PILLS & SPEC ROW ================= */
+.card-specs-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+}
+
+.spec-pill {
+    padding: 4px 8px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-glass);
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.25s ease;
+}
+
+.product-card:hover .spec-pill {
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+.spec-inches {
+    color: var(--neon-cyan);
+    background: rgba(0, 255, 204, 0.03);
+}
+.spec-hz {
+    color: var(--neon-violet);
+    background: rgba(139, 92, 246, 0.03);
+}
+.spec-ms {
+    color: var(--neon-coral);
+    background: rgba(244, 63, 94, 0.03);
+}
+.spec-arms {
+    color: var(--neon-cyan);
+    background: rgba(0, 255, 204, 0.03);
+}
+.spec-weight {
+    color: var(--neon-green);
+    background: rgba(34, 197, 94, 0.03);
+}
+

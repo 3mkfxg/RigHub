@@ -24,15 +24,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Category details with specific icons mapping
     const CATEGORY_MAP = {
-        "Processor": { label: "CPUs", icon: "fa-microchip" },
-        "Motherboard": { label: "Motherboards", icon: "fa-circle-nodes" },
-        "GPU": { label: "GPUs", icon: "fa-bolt" },
-        "RAM": { label: "RAM", icon: "fa-memory" },
-        "PSU": { label: "PSUs", icon: "fa-plug" },
-        "Case": { label: "Cases", icon: "fa-box" },
-        "Fan": { label: "Coolers / Fans", icon: "fa-fan" },
-        "SSD": { label: "SSDs", icon: "fa-hdd" },
-        "Hard Disk": { label: "Hard Disks", icon: "fa-database" }
+        "Monitor": { label: "Monitors", icon: "fa-desktop" },
+        "Monitor Arm": { label: "Monitor Arms", icon: "fa-dolly" }
     };
 
     // DOM ELEMENTS
@@ -117,16 +110,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 p.price_val = priceVal;
                 
-                // Standardize category labels
-                if (p["Component Type"] === "Processor") p.category_key = "Processor";
-                else if (p["Component Type"] === "Motherboard") p.category_key = "Motherboard";
-                else if (p["Component Type"] === "GPU") p.category_key = "GPU";
-                else if (p["Component Type"] === "RAM") p.category_key = "RAM";
-                else if (p["Component Type"] === "PSU") p.category_key = "PSU";
-                else if (p["Component Type"] === "Case") p.category_key = "Case";
-                else if (p["Component Type"] === "Fan") p.category_key = "Fan";
-                else if (p["Component Type"] === "SSD") p.category_key = "SSD";
-                else if (p["Component Type"] === "Hard Disk") p.category_key = "Hard Disk";
+                // Standardize category labels & safe specs mapping
+                p.screen_size = p["Screen Size (Inches)"] || null;
+                p.refresh_rate = p["Refresh Rate (Hz)"] || null;
+                p.response_time = p["Response Time (ms)"] || null;
+                p.arms_supported = p["Arms Supported"] || null;
+                p.weight_support = p["Weight Support (kg)"] || null;
+
+                if (p["Component Type"] === "Monitor") p.category_key = "Monitor";
+                else if (p["Component Type"] === "Monitor Arm") p.category_key = "Monitor Arm";
                 else p.category_key = "Unknown";
                 return p;
             });
@@ -414,6 +406,21 @@ document.addEventListener("DOMContentLoaded", () => {
                     
                     <div class="card-middle">
                         <h4 class="card-title" title="${product["Full Name"]}">${cardTitle}</h4>
+                        
+                        <!-- Specs Pill Row -->
+                        ${(product.category_key === "Monitor") ? `
+                            <div class="card-specs-row">
+                                ${product.screen_size ? `<span class="spec-pill spec-inches"><i class="fa-solid fa-expand"></i> ${product.screen_size}"</span>` : ''}
+                                ${product.refresh_rate ? `<span class="spec-pill spec-hz"><i class="fa-solid fa-gauge-high"></i> ${product.refresh_rate}Hz</span>` : ''}
+                                ${product.response_time ? `<span class="spec-pill spec-ms"><i class="fa-solid fa-bolt"></i> ${product.response_time}ms</span>` : ''}
+                            </div>
+                        ` : (product.category_key === "Monitor Arm") ? `
+                            <div class="card-specs-row">
+                                ${product.arms_supported ? `<span class="spec-pill spec-arms"><i class="fa-solid fa-circle-nodes"></i> ${product.arms_supported === 1 ? 'Single Arm' : product.arms_supported === 2 ? 'Dual Arm' : product.arms_supported === 3 ? 'Triple Arm' : product.arms_supported + ' Arms'}</span>` : ''}
+                                ${product.weight_support ? `<span class="spec-pill spec-weight"><i class="fa-solid fa-weight-hanging"></i> Max ${product.weight_support}kg</span>` : ''}
+                            </div>
+                        ` : ''}
+
                         <div class="card-stock-row">
                             <span class="stock-indicator ${isOutOfStock ? "out-stock-indicator" : "in-stock-indicator"}"></span>
                             <span class="${isOutOfStock ? "stock-text-out" : "stock-text-in"}">${product.Status}</span>
@@ -611,6 +618,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const categoryRow = document.getElementById("compare-row-category");
         const nameRow = document.getElementById("compare-row-name");
         const priceRow = document.getElementById("compare-row-price");
+        const sizeRow = document.getElementById("compare-row-size");
+        const hzRow = document.getElementById("compare-row-hz");
+        const msRow = document.getElementById("compare-row-ms");
+        const armsRow = document.getElementById("compare-row-arms");
+        const weightRow = document.getElementById("compare-row-weight");
         const statusRow = document.getElementById("compare-row-status");
         const actionRow = document.getElementById("compare-row-action");
         
@@ -618,8 +630,13 @@ document.addEventListener("DOMContentLoaded", () => {
         imageRow.innerHTML = '<td class="attr-label">Product Image</td>';
         storeRow.innerHTML = '<td class="attr-label">Store Origin</td>';
         categoryRow.innerHTML = '<td class="attr-label">Category</td>';
-        nameRow.innerHTML = '<td class="attr-label">Component Name</td>';
+        nameRow.innerHTML = '<td class="attr-label">Product Name</td>';
         priceRow.innerHTML = '<td class="attr-label">Price (JOD)</td>';
+        sizeRow.innerHTML = '<td class="attr-label">Screen Size (Inches)</td>';
+        hzRow.innerHTML = '<td class="attr-label">Refresh Rate (Hz)</td>';
+        msRow.innerHTML = '<td class="attr-label">Response Time (ms)</td>';
+        armsRow.innerHTML = '<td class="attr-label">Arms Supported</td>';
+        weightRow.innerHTML = '<td class="attr-label">Weight Capacity (kg)</td>';
         statusRow.innerHTML = '<td class="attr-label">Stock Status</td>';
         actionRow.innerHTML = '<td class="attr-label">Store Page</td>';
         
@@ -638,7 +655,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <div class="compare-image-wrapper">
                         <img class="compare-image" src="${item["Image URL"]}" alt="${item["Full Name"]}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                         <div class="compare-image-fallback" style="display:none;">
-                            <i class="fa-solid ${CATEGORY_MAP[item.category_key]?.icon || 'fa-microchip'} fallback-icon"></i>
+                            <i class="fa-solid ${CATEGORY_MAP[item.category_key]?.icon || 'fa-desktop'} fallback-icon"></i>
                         </div>
                     </div>
                 `;
@@ -646,7 +663,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 compareImageHTML = `
                     <div class="compare-image-wrapper">
                         <div class="compare-image-fallback">
-                            <i class="fa-solid ${CATEGORY_MAP[item.category_key]?.icon || 'fa-microchip'} fallback-icon"></i>
+                            <i class="fa-solid ${CATEGORY_MAP[item.category_key]?.icon || 'fa-desktop'} fallback-icon"></i>
                         </div>
                     </div>
                 `;
@@ -658,6 +675,19 @@ document.addEventListener("DOMContentLoaded", () => {
             categoryRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell" style="font-weight:600;">${item.category_key}</td>`);
             nameRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell" style="font-size:0.85rem;text-align:left;">${item["Full Name"]}</td>`);
             priceRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell cell-price">${item.Price}</td>`);
+            
+            // Specialized specifications cells
+            sizeRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell">${item.screen_size ? item.screen_size + '"' : 'N/A'}</td>`);
+            hzRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell">${item.refresh_rate ? item.refresh_rate + 'Hz' : 'N/A'}</td>`);
+            msRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell">${item.response_time ? item.response_time + 'ms' : 'N/A'}</td>`);
+            
+            let armsLabel = 'N/A';
+            if (item.arms_supported) {
+                armsLabel = item.arms_supported === 1 ? "1 (Single)" : item.arms_supported === 2 ? "2 (Dual)" : item.arms_supported === 3 ? "3 (Triple)" : item.arms_supported;
+            }
+            armsRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell">${armsLabel}</td>`);
+            weightRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell">${item.weight_support ? item.weight_support + ' kg' : 'N/A'}</td>`);
+            
             statusRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell">
                 <span class="stock-text-${isOutOfStock ? "out" : "in"}">
                     <i class="fa-solid ${isOutOfStock ? "fa-circle-xmark" : "fa-circle-check"}"></i> ${item.Status}

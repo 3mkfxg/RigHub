@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PRICEWEB - Jordan PC Components Comparator</title>
+    <title>PRICEWEB - Jordan Monitor & Arm Comparator</title>
     <!-- Google Fonts: Outfit for body, Orbitron for futuristic tech headings -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -27,13 +27,13 @@
                 <i class="fa-solid fa-microchip logo-icon"></i>
                 <div class="logo-text">
                     <h1>PRICE<span>WEB</span></h1>
-                    <p>Jordan PC Components Comparator <span style="font-size: 0.75rem; color: var(--neon-violet); text-transform: none; margin-left: 5px;">by 3mkfxg</span></p>
+                    <p>Jordan Monitor & Arm Comparator <span style="font-size: 0.75rem; color: var(--neon-violet); text-transform: none; margin-left: 5px;">by 3mkfxg</span></p>
                 </div>
             </div>
             <div class="header-stats">
                 <div class="stat-badge">
                     <span class="stat-num" id="stat-total-products">0</span>
-                    <span class="stat-label">Total Components</span>
+                    <span class="stat-label">Total Items</span>
                 </div>
                 <div class="stat-badge store-igeek">
                     <span class="stat-num" id="stat-igeek-count">0</span>
@@ -65,7 +65,7 @@
                     <label class="group-label">Instant Search</label>
                     <div class="search-input-wrapper">
                         <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                        <input type="text" id="search-input" placeholder="Search CPU, RTX, SSD, Motherboard..." autocomplete="off">
+                        <input type="text" id="search-input" placeholder="Search Curved, 240Hz, IPS, Dual Arms..." autocomplete="off">
                         <button class="clear-search-btn" id="btn-clear-search" style="display: none;"><i class="fa-solid fa-xmark"></i></button>
                     </div>
                 </div>
@@ -94,7 +94,7 @@
 
                 <!-- Component Type Filters -->
                 <div class="filter-group">
-                    <label class="group-label">PC Component Type</label>
+                    <label class="group-label">Category</label>
                     <div class="category-grid" id="category-filter-list">
                         <!-- Filled dynamically by JavaScript -->
                     </div>
@@ -226,13 +226,28 @@
                                 <td class="attr-label">Store Origin</td>
                             </tr>
                             <tr id="compare-row-category">
-                                <td class="attr-label">Component Category</td>
+                                <td class="attr-label">Category</td>
                             </tr>
                             <tr id="compare-row-name">
                                 <td class="attr-label">Product Name</td>
                             </tr>
                             <tr id="compare-row-price">
                                 <td class="attr-label">Price (JOD)</td>
+                            </tr>
+                            <tr id="compare-row-size">
+                                <td class="attr-label">Screen Size (Inches)</td>
+                            </tr>
+                            <tr id="compare-row-hz">
+                                <td class="attr-label">Refresh Rate (Hz)</td>
+                            </tr>
+                            <tr id="compare-row-ms">
+                                <td class="attr-label">Response Time (ms)</td>
+                            </tr>
+                            <tr id="compare-row-arms">
+                                <td class="attr-label">Arms Supported</td>
+                            </tr>
+                            <tr id="compare-row-weight">
+                                <td class="attr-label">Weight Capacity (kg)</td>
                             </tr>
                             <tr id="compare-row-status">
                                 <td class="attr-label">Availability Status</td>
