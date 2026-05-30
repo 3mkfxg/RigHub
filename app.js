@@ -709,7 +709,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 armsLabel = item.arms_supported === 1 ? "1 (Single)" : item.arms_supported === 2 ? "2 (Dual)" : item.arms_supported === 3 ? "3 (Triple)" : item.arms_supported;
             }
             armsRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell">${armsLabel}</td>`);
-            weightRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell">${item.weight_support ? item.weight_support + ' kg' : 'N/A'}</td>`);
+            weightRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell">${item.weight_support ? (String(item.weight_support).toLowerCase().includes('kg') ? item.weight_support : item.weight_support + ' kg') : 'N/A'}</td>`);
 
             statusRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell">
                 <span class="stock-text-${isOutOfStock ? "out" : "in"}">

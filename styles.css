@@ -363,6 +363,9 @@ body {
 .igeek-check input:checked ~ .checkmark { background-color: var(--neon-violet); border-color: var(--neon-violet); box-shadow: var(--glow-violet); }
 .citycenter-check input:checked ~ .checkmark { background-color: #3b82f6; border-color: #3b82f6; box-shadow: 0 0 10px rgba(59, 130, 246, 0.4); }
 .osjo-check input:checked ~ .checkmark { background-color: #d97706; border-color: #d97706; box-shadow: 0 0 10px rgba(217, 119, 6, 0.4); }
+.pccircle-check input:checked ~ .checkmark { background-color: var(--neon-cyan); border-color: var(--neon-cyan); box-shadow: var(--glow-cyan); }
+.taipei-check input:checked ~ .checkmark { background-color: #ff007f; border-color: #ff007f; box-shadow: 0 0 10px rgba(255, 0, 127, 0.4); }
+.mcc-check input:checked ~ .checkmark { background-color: #10b981; border-color: #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); }
 
 .checkmark:after {
     content: "";
