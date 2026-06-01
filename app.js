@@ -497,7 +497,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             }
 
-            const isOutOfStock = product.Status !== "In Stock";
+            const isOutOfStock = product.Status === "Out of Stock";
+            const isComingSoon = product.Status === "Coming Soon";
+            
+            let stockIndicatorClass = "in-stock-indicator";
+            let stockTextClass = "stock-text-in";
+            if (isOutOfStock) {
+                stockIndicatorClass = "out-stock-indicator";
+                stockTextClass = "stock-text-out";
+            } else if (isComingSoon) {
+                stockIndicatorClass = "coming-soon-indicator";
+                stockTextClass = "stock-text-coming";
+            }
+
             const priceText = product.Price || `${product.price_val.toFixed(2)} JOD`;
 
             // Determine dynamic store classes
@@ -554,8 +566,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         ` : ''}
 
                         <div class="card-stock-row">
-                            <span class="stock-indicator ${isOutOfStock ? "out-stock-indicator" : "in-stock-indicator"}"></span>
-                            <span class="${isOutOfStock ? "stock-text-out" : "stock-text-in"}">${product.Status}</span>
+                            <span class="stock-indicator ${stockIndicatorClass}"></span>
+                            <span class="${stockTextClass}">${product.Status}</span>
                         </div>
                     </div>
                     
@@ -784,7 +796,8 @@ document.addEventListener("DOMContentLoaded", () => {
             else if (item["Website Name"] === "Taipei Computer") storeBadge = "badge-taipei";
             else if (item["Website Name"] === "MCC Jordan") storeBadge = "badge-mcc";
 
-            const isOutOfStock = item.Status !== "In Stock";
+            const isOutOfStock = item.Status === "Out of Stock";
+            const isComingSoon = item.Status === "Coming Soon";
 
             // Image cell injection
             let compareImageHTML = "";
@@ -826,9 +839,19 @@ document.addEventListener("DOMContentLoaded", () => {
             armsRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell">${armsLabel}</td>`);
             weightRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell">${item.weight_support ? (String(item.weight_support).toLowerCase().includes('kg') ? item.weight_support : item.weight_support + ' kg') : 'N/A'}</td>`);
 
+            let statusTextClass = "stock-text-in";
+            let statusIconClass = "fa-circle-check";
+            if (isOutOfStock) {
+                statusTextClass = "stock-text-out";
+                statusIconClass = "fa-circle-xmark";
+            } else if (isComingSoon) {
+                statusTextClass = "stock-text-coming";
+                statusIconClass = "fa-circle-question";
+            }
+
             statusRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell">
-                <span class="stock-text-${isOutOfStock ? "out" : "in"}">
-                    <i class="fa-solid ${isOutOfStock ? "fa-circle-xmark" : "fa-circle-check"}"></i> ${item.Status}
+                <span class="${statusTextClass}">
+                    <i class="fa-solid ${statusIconClass}"></i> ${item.Status}
                 </span>
             </td>`);
             actionRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell cell-action">

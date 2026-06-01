@@ -968,9 +968,11 @@ body {
 }
 .in-stock-indicator { background-color: var(--neon-green); box-shadow: var(--glow-green); }
 .out-stock-indicator { background-color: var(--neon-coral); box-shadow: 0 0 10px rgba(248, 113, 113, 0.5); }
+.coming-soon-indicator { background-color: #fbbf24; box-shadow: 0 0 10px rgba(251, 191, 36, 0.5); }
 
 .stock-text-in { color: var(--neon-green); font-weight: 500; }
 .stock-text-out { color: var(--neon-coral); font-weight: 500; }
+.stock-text-coming { color: #fbbf24; font-weight: 500; }
 
 .card-bottom {
     display: flex;
