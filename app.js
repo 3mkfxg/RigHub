@@ -34,7 +34,15 @@ document.addEventListener("DOMContentLoaded", () => {
         "Hard Disk": { label: "Hard Disks (HDD)", icon: "fa-hdd", emoji: "💿", color: "#94a3b8", desc: "High-capacity storage drives" },
         "Case": { label: "PC Cases", icon: "fa-box", emoji: "🖥", color: "#e879f9", desc: "ATX towers & compact cases" },
         "PSU": { label: "Power Supplies", icon: "fa-plug", emoji: "⚡", color: "#facc15", desc: "Modular & semi-modular PSUs" },
-        "Fan": { label: "Fans & Coolers", icon: "fa-fan", emoji: "🌀", color: "#38bdf8", desc: "Air coolers & AIO liquid cooling" }
+        "Fan": { label: "Fans & Coolers", icon: "fa-fan", emoji: "🌀", color: "#38bdf8", desc: "Air coolers & AIO liquid cooling" },
+        // Streaming & Gaming Accessories Categories
+        "Peripherals": { label: "Peripherals", icon: "fa-keyboard", emoji: "⌨️", color: "#00ffcc", desc: "Mice, keyboards & mouse pads" },
+        "Controllers": { label: "Controllers", icon: "fa-gamepad", emoji: "🎮", color: "#ff007f", desc: "Console & PC game controllers" },
+        "Audio Gear": { label: "Audio Gear", icon: "fa-headphones", emoji: "🎧", color: "#a78bfa", desc: "Headsets, microphones & speakers" },
+        "Stream Gear": { label: "Stream Gear", icon: "fa-sliders", emoji: "🎙️", color: "#fbbf24", desc: "Stream decks, mixers & mic stands" },
+        "Lighting & RGB": { label: "Lighting & RGB", icon: "fa-lightbulb", emoji: "💡", color: "#f472b6", desc: "RGB lights & led strip light strips" },
+        "Desks & Chairs": { label: "Desks & Chairs", icon: "fa-chair", emoji: "💺", color: "#10b981", desc: "Gaming chairs & gaming tables" },
+        "Webcams": { label: "Webcams", icon: "fa-video", emoji: "📷", color: "#38bdf8", desc: "High-resolution webcams" }
     };
 
     // DOM ELEMENTS
