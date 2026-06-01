@@ -38,11 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // DOM ELEMENTS
-    const catHomepage = document.getElementById("category-homepage");
-    const catHomeGrid = document.getElementById("cat-home-grid");
-    const mainLayout = document.getElementById("main-layout");
-    const btnBackCategories = document.getElementById("btn-back-categories");
-    const browsingLabel = document.getElementById("browsing-label");
+    const catStrip = document.getElementById("cat-strip");
 
     const gridContainer = document.getElementById("products-catalog-grid");
     const paginationPanel = document.getElementById("pagination-panel");
@@ -128,8 +124,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             compileMetadata();
             initializeFilterUI();
-            renderCategoryHomepage();
-            // Don't call applyFiltersAndSorting here — homepage is shown first
+            renderCategoryStrip();
+            applyFiltersAndSorting();
 
         } catch (error) {
             console.error("Initialization Error: ", error);
@@ -219,6 +215,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 btn.classList.add("active");
                 selectedCategory = btn.getAttribute("data-category");
                 currentPage = 1;
+
+                // Sync the top strip
+                if (catStrip) {
+                    catStrip.querySelectorAll(".cat-strip-pill").forEach(p => {
+                        p.classList.toggle("active", p.getAttribute("data-category") === selectedCategory);
+                    });
+                }
+
                 applyFiltersAndSorting();
             });
         });
@@ -238,65 +242,45 @@ document.addEventListener("DOMContentLoaded", () => {
         updateSliderTrack();
     }
 
-    // ================= CATEGORY HOMEPAGE =================
-    function renderCategoryHomepage() {
-        catHomeGrid.innerHTML = "";
+    // ================= CATEGORY STRIP =================
+    function renderCategoryStrip() {
+        if (!catStrip) return;
+        catStrip.innerHTML = "";
+
+        // "All" pill
+        const allPill = document.createElement("button");
+        allPill.className = "cat-strip-pill active";
+        allPill.setAttribute("data-category", "all");
+        allPill.innerHTML = `<i class="fa-solid fa-border-all"></i> All Parts`;
+        allPill.addEventListener("click", () => selectStripCategory("all", allPill));
+        catStrip.appendChild(allPill);
+
         Object.keys(CATEGORY_MAP).forEach(key => {
             const cat = CATEGORY_MAP[key];
-            const count = allProducts.filter(p => p.category_key === key).length;
-            const card = document.createElement("div");
-            card.className = "cat-home-card";
-            card.setAttribute("data-category", key);
-            card.innerHTML = `
-                <div class="cat-home-card-icon" style="--cat-color: ${cat.color}">
-                    <i class="fa-solid ${cat.icon}"></i>
-                </div>
-                <div class="cat-home-card-info">
-                    <h3>${cat.label}</h3>
-                    <p>${cat.desc}</p>
-                    <span class="cat-home-card-count">${count.toLocaleString()} items</span>
-                </div>
-                <i class="fa-solid fa-chevron-right cat-home-arrow"></i>
-            `;
-            card.addEventListener("click", () => {
-                goToCategory(key);
-            });
-            catHomeGrid.appendChild(card);
+            const pill = document.createElement("button");
+            pill.className = "cat-strip-pill";
+            pill.setAttribute("data-category", key);
+            pill.style.setProperty("--cat-color", cat.color);
+            pill.innerHTML = `<i class="fa-solid ${cat.icon}"></i> ${cat.label}`;
+            pill.addEventListener("click", () => selectStripCategory(key, pill));
+            catStrip.appendChild(pill);
         });
     }
 
-    function goToCategory(categoryKey) {
-        selectedCategory = categoryKey;
-        currentPage = 1;
+    function selectStripCategory(categoryKey, clickedPill) {
+        // Update strip active state
+        catStrip.querySelectorAll(".cat-strip-pill").forEach(p => p.classList.remove("active"));
+        clickedPill.classList.add("active");
 
-        // Update sidebar category buttons too
+        // Sync sidebar buttons
         const categoryButtons = document.querySelectorAll(".btn-category");
         categoryButtons.forEach(b => {
             b.classList.toggle("active", b.getAttribute("data-category") === categoryKey);
         });
 
-        const cat = CATEGORY_MAP[categoryKey];
-        if (browsingLabel) {
-            browsingLabel.innerHTML = `<i class="fa-solid ${cat.icon}" style="color:${cat.color}"></i> Browsing: <strong style="color:${cat.color}">${cat.label}</strong>`;
-        }
-
-        // Show catalog, hide homepage
-        catHomepage.style.display = "none";
-        mainLayout.style.display = "";
-
+        selectedCategory = categoryKey;
+        currentPage = 1;
         applyFiltersAndSorting();
-    }
-
-    function goBackToHomepage() {
-        catHomepage.style.display = "";
-        mainLayout.style.display = "none";
-        selectedCategory = "all";
-
-        // Reset sidebar category
-        const categoryButtons = document.querySelectorAll(".btn-category");
-        categoryButtons.forEach(b => {
-            b.classList.toggle("active", b.getAttribute("data-category") === "all");
-        });
     }
 
     // ================= 2. FILTERING AND SORTING ACTIONS =================

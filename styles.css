@@ -195,202 +195,79 @@ body {
 .store-citycenter h4, .store-citycenter .stat-num { color: #60a5fa; }
 .store-osjo h4, .store-osjo .stat-num { color: #fbbf24; }
 
-/* ================= CATEGORY HOMEPAGE ================= */
-.category-homepage {
-    display: flex;
-    flex-direction: column;
-    gap: 28px;
-    animation: fadeSlideUp 0.5s ease both;
-}
-
+/* ================= CATEGORY STRIP ================= */
 @keyframes fadeSlideUp {
-    from { opacity: 0; transform: translateY(24px); }
+    from { opacity: 0; transform: translateY(16px); }
     to   { opacity: 1; transform: translateY(0); }
 }
 
-.cat-home-header {
-    padding: 10px 4px;
-}
-
-.cat-home-title {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: var(--text-white);
-    letter-spacing: 1.5px;
-    margin-bottom: 8px;
+.cat-strip {
     display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.cat-home-title i {
-    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-violet));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.cat-home-subtitle {
-    font-size: 0.95rem;
-    color: var(--text-muted);
-    line-height: 1.6;
-}
-
-/* Category Card Grid - horizontal rows */
-.cat-home-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 16px;
-}
-
-/* Individual Category Card - wide list style */
-.cat-home-card {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding: 20px 24px;
-    background: var(--bg-card);
-    border: 1px solid var(--border-glass);
-    border-radius: 14px;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    position: relative;
-    overflow: hidden;
-}
-
-.cat-home-card::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0;
-    width: 4px;
-    height: 100%;
-    background: var(--cat-color, var(--neon-cyan));
-    border-radius: 4px 0 0 4px;
-    opacity: 0.8;
-    transition: width 0.3s ease;
-}
-
-.cat-home-card:hover {
-    transform: translateY(-4px) scale(1.01);
-    border-color: var(--border-glass-hover);
-    box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(0, 255, 204, 0.08);
-    background: hsla(228, 25%, 12%, 0.9);
-}
-
-.cat-home-card:hover::before {
-    width: 6px;
-}
-
-.cat-home-card-icon {
-    flex-shrink: 0;
-    width: 60px;
-    height: 60px;
-    border-radius: 14px;
-    background: color-mix(in srgb, var(--cat-color) 12%, transparent);
-    border: 1px solid color-mix(in srgb, var(--cat-color) 30%, transparent);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    color: var(--cat-color);
-    box-shadow: 0 0 18px color-mix(in srgb, var(--cat-color) 15%, transparent);
-    transition: all 0.3s ease;
-}
-
-.cat-home-card:hover .cat-home-card-icon {
-    transform: scale(1.1) rotate(-5deg);
-    box-shadow: 0 0 28px color-mix(in srgb, var(--cat-color) 30%, transparent);
-}
-
-.cat-home-card-info {
-    flex: 1;
-    min-width: 0;
-}
-
-.cat-home-card-info h3 {
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: var(--text-white);
-    margin-bottom: 3px;
-}
-
-.cat-home-card-info p {
-    font-size: 0.82rem;
-    color: var(--text-muted);
-    margin-bottom: 6px;
-}
-
-.cat-home-card-count {
-    display: inline-block;
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: var(--cat-color, var(--neon-cyan));
-    background: color-mix(in srgb, var(--cat-color) 10%, transparent);
-    border: 1px solid color-mix(in srgb, var(--cat-color) 25%, transparent);
-    border-radius: 20px;
-    padding: 2px 10px;
-    font-family: 'Orbitron', sans-serif;
-    letter-spacing: 0.5px;
-}
-
-.cat-home-arrow {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    flex-shrink: 0;
-    transition: all 0.25s ease;
-}
-
-.cat-home-card:hover .cat-home-arrow {
-    color: var(--cat-color, var(--neon-cyan));
-    transform: translateX(4px);
-}
-
-/* ================= BACK BAR ================= */
-.back-bar {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 4px;
-    flex-wrap: wrap;
-}
-
-.btn-back-categories {
-    display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 9px 18px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid var(--border-glass);
-    border-radius: 10px;
-    color: var(--text-main);
-    font-family: inherit;
-    font-size: 0.88rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.25s ease;
+    padding: 14px 20px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-glass) transparent;
+    animation: fadeSlideUp 0.4s ease both;
 }
 
-.btn-back-categories:hover {
-    background: rgba(0, 255, 204, 0.05);
-    border-color: var(--neon-cyan);
-    color: var(--neon-cyan);
-    transform: translateX(-3px);
+.cat-strip::-webkit-scrollbar {
+    height: 4px;
+}
+.cat-strip::-webkit-scrollbar-thumb {
+    background: var(--border-glass);
+    border-radius: 4px;
 }
 
-.btn-back-categories i {
-    transition: transform 0.2s ease;
+/* Fade edges to hint at scrollability */
+.cat-strip::before,
+.cat-strip::after {
+    display: none; /* clean look on most screens */
 }
 
-.btn-back-categories:hover i {
-    transform: translateX(-3px);
-}
-
-.browsing-label {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    display: flex;
+.cat-strip-pill {
+    display: inline-flex;
     align-items: center;
     gap: 7px;
+    padding: 8px 16px;
+    border-radius: 30px;
+    border: 1px solid var(--border-glass);
+    background: rgba(255,255,255,0.03);
+    color: var(--text-muted);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.83rem;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.cat-strip-pill:hover {
+    background: rgba(255,255,255,0.07);
+    border-color: rgba(255,255,255,0.2);
+    color: var(--text-white);
+    transform: translateY(-2px);
+}
+
+/* Active pill — glows with the category color */
+.cat-strip-pill.active {
+    background: color-mix(in srgb, var(--cat-color, var(--neon-cyan)) 12%, transparent);
+    border-color: var(--cat-color, var(--neon-cyan));
+    color: var(--cat-color, var(--neon-cyan));
+    box-shadow: 0 0 14px color-mix(in srgb, var(--cat-color, var(--neon-cyan)) 25%, transparent);
+    font-weight: 600;
+}
+
+/* "All Parts" pill uses neon-cyan default */
+.cat-strip-pill[data-category="all"].active {
+    background: rgba(0,255,204,0.1);
+    border-color: var(--neon-cyan);
+    color: var(--neon-cyan);
+    box-shadow: 0 0 14px rgba(0,255,204,0.2);
 }
 
 /* ================= MAIN LAYOUT ================= */
