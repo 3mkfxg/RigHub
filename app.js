@@ -24,20 +24,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Category details with specific icons mapping
     const CATEGORY_MAP = {
-        "Monitor": { label: "Monitors", icon: "fa-desktop" },
-        "Monitor Arm": { label: "Monitor Arms", icon: "fa-dolly" },
-        "GPU": { label: "Graphics Cards", icon: "fa-server" },
-        "Processor": { label: "Processors (CPU)", icon: "fa-microchip" },
-        "Motherboard": { label: "Motherboards", icon: "fa-chess-board" },
-        "RAM": { label: "Memory (RAM)", icon: "fa-memory" },
-        "SSD": { label: "SSDs (M.2/SATA)", icon: "fa-database" },
-        "Hard Disk": { label: "Hard Disks (HDD)", icon: "fa-hdd" },
-        "Case": { label: "PC Cases", icon: "fa-box" },
-        "PSU": { label: "Power Supplies", icon: "fa-plug" },
-        "Fan": { label: "Fans & Coolers", icon: "fa-fan" }
+        "Monitor": { label: "Monitors", icon: "fa-desktop", emoji: "🖥️", color: "#00ffcc", desc: "Full HD, QHD & 4K displays" },
+        "Monitor Arm": { label: "Monitor Arms", icon: "fa-dolly", emoji: "🦾", color: "#a78bfa", desc: "Single, dual & triple mounts" },
+        "GPU": { label: "Graphics Cards", icon: "fa-server", emoji: "🎮", color: "#f97316", desc: "NVIDIA & AMD gaming GPUs" },
+        "Processor": { label: "Processors (CPU)", icon: "fa-microchip", emoji: "🔲", color: "#60a5fa", desc: "Intel Core & AMD Ryzen" },
+        "Motherboard": { label: "Motherboards", icon: "fa-chess-board", emoji: "🗜️", color: "#34d399", desc: "ATX, mATX & ITX boards" },
+        "RAM": { label: "Memory (RAM)", icon: "fa-memory", emoji: "🧩", color: "#f472b6", desc: "DDR4 & DDR5 memory kits" },
+        "SSD": { label: "SSDs (M.2/SATA)", icon: "fa-database", emoji: "💾", color: "#fbbf24", desc: "NVMe M.2 & SATA drives" },
+        "Hard Disk": { label: "Hard Disks (HDD)", icon: "fa-hdd", emoji: "💿", color: "#94a3b8", desc: "High-capacity storage drives" },
+        "Case": { label: "PC Cases", icon: "fa-box", emoji: "🖥", color: "#e879f9", desc: "ATX towers & compact cases" },
+        "PSU": { label: "Power Supplies", icon: "fa-plug", emoji: "⚡", color: "#facc15", desc: "Modular & semi-modular PSUs" },
+        "Fan": { label: "Fans & Coolers", icon: "fa-fan", emoji: "🌀", color: "#38bdf8", desc: "Air coolers & AIO liquid cooling" }
     };
 
     // DOM ELEMENTS
+    const catHomepage = document.getElementById("category-homepage");
+    const catHomeGrid = document.getElementById("cat-home-grid");
+    const mainLayout = document.getElementById("main-layout");
+    const btnBackCategories = document.getElementById("btn-back-categories");
+    const browsingLabel = document.getElementById("browsing-label");
+
     const gridContainer = document.getElementById("products-catalog-grid");
     const paginationPanel = document.getElementById("pagination-panel");
     const searchInput = document.getElementById("search-input");
@@ -122,7 +128,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             compileMetadata();
             initializeFilterUI();
-            applyFiltersAndSorting();
+            renderCategoryHomepage();
+            // Don't call applyFiltersAndSorting here — homepage is shown first
 
         } catch (error) {
             console.error("Initialization Error: ", error);
@@ -229,6 +236,67 @@ document.addEventListener("DOMContentLoaded", () => {
         sliderMax.value = dataPriceMax;
 
         updateSliderTrack();
+    }
+
+    // ================= CATEGORY HOMEPAGE =================
+    function renderCategoryHomepage() {
+        catHomeGrid.innerHTML = "";
+        Object.keys(CATEGORY_MAP).forEach(key => {
+            const cat = CATEGORY_MAP[key];
+            const count = allProducts.filter(p => p.category_key === key).length;
+            const card = document.createElement("div");
+            card.className = "cat-home-card";
+            card.setAttribute("data-category", key);
+            card.innerHTML = `
+                <div class="cat-home-card-icon" style="--cat-color: ${cat.color}">
+                    <i class="fa-solid ${cat.icon}"></i>
+                </div>
+                <div class="cat-home-card-info">
+                    <h3>${cat.label}</h3>
+                    <p>${cat.desc}</p>
+                    <span class="cat-home-card-count">${count.toLocaleString()} items</span>
+                </div>
+                <i class="fa-solid fa-chevron-right cat-home-arrow"></i>
+            `;
+            card.addEventListener("click", () => {
+                goToCategory(key);
+            });
+            catHomeGrid.appendChild(card);
+        });
+    }
+
+    function goToCategory(categoryKey) {
+        selectedCategory = categoryKey;
+        currentPage = 1;
+
+        // Update sidebar category buttons too
+        const categoryButtons = document.querySelectorAll(".btn-category");
+        categoryButtons.forEach(b => {
+            b.classList.toggle("active", b.getAttribute("data-category") === categoryKey);
+        });
+
+        const cat = CATEGORY_MAP[categoryKey];
+        if (browsingLabel) {
+            browsingLabel.innerHTML = `<i class="fa-solid ${cat.icon}" style="color:${cat.color}"></i> Browsing: <strong style="color:${cat.color}">${cat.label}</strong>`;
+        }
+
+        // Show catalog, hide homepage
+        catHomepage.style.display = "none";
+        mainLayout.style.display = "";
+
+        applyFiltersAndSorting();
+    }
+
+    function goBackToHomepage() {
+        catHomepage.style.display = "";
+        mainLayout.style.display = "none";
+        selectedCategory = "all";
+
+        // Reset sidebar category
+        const categoryButtons = document.querySelectorAll(".btn-category");
+        categoryButtons.forEach(b => {
+            b.classList.toggle("active", b.getAttribute("data-category") === "all");
+        });
     }
 
     // ================= 2. FILTERING AND SORTING ACTIONS =================
@@ -740,6 +808,11 @@ document.addEventListener("DOMContentLoaded", () => {
             trayChevron.className = "fa-solid fa-chevron-down";
         }
     });
+
+    // Back to Categories button
+    if (btnBackCategories) {
+        btnBackCategories.addEventListener("click", goBackToHomepage);
+    }
 
     // Reset All filters button
     btnResetFilters.addEventListener("click", () => {
