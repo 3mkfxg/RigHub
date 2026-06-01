@@ -80,6 +80,44 @@ document.addEventListener("DOMContentLoaded", () => {
     const compareModal = document.getElementById("compare-modal");
     const btnCloseCompareModal = document.getElementById("btn-close-compare-modal");
 
+    // Theme Switcher elements
+    const btnThemeToggle = document.getElementById("theme-toggle-btn");
+    const themeIcon = document.getElementById("theme-icon");
+
+    // Initialize Theme state (Default to Dark)
+    const storedTheme = localStorage.getItem("theme") || "dark";
+    if (storedTheme === "light") {
+        document.body.classList.add("light-theme");
+        if (themeIcon) {
+            themeIcon.className = "fa-solid fa-sun";
+        }
+    } else {
+        document.body.classList.remove("light-theme");
+        if (themeIcon) {
+            themeIcon.className = "fa-solid fa-moon";
+        }
+    }
+
+    if (btnThemeToggle) {
+        btnThemeToggle.addEventListener("click", () => {
+            const isLight = document.body.classList.toggle("light-theme");
+            localStorage.setItem("theme", isLight ? "light" : "dark");
+            
+            if (themeIcon) {
+                // Rotation/scale transition effect
+                themeIcon.style.transition = "transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease";
+                themeIcon.style.transform = "scale(0) rotate(-90deg)";
+                themeIcon.style.opacity = "0";
+                
+                setTimeout(() => {
+                    themeIcon.className = isLight ? "fa-solid fa-sun" : "fa-solid fa-moon";
+                    themeIcon.style.transform = "scale(1) rotate(0deg)";
+                    themeIcon.style.opacity = "1";
+                }, 200);
+            }
+        });
+    }
+
     // ================= 1. INITIAL LOADING & METADATA COMPILATION =================
     async function loadProductCatalog() {
         try {
