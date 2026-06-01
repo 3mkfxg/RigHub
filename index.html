@@ -62,13 +62,19 @@
             </div>
         </header>
 
-        <!-- ================= CATEGORY TAB STRIP ================= -->
-        <div class="cat-strip glass-panel" id="cat-strip">
-            <!-- Filled dynamically by JavaScript -->
-        </div>
+        <!-- ================= CATEGORY HOMEPAGE ================= -->
+        <section class="category-homepage" id="category-homepage">
+            <div class="cat-home-header">
+                <h2 class="cat-home-title"><i class="fa-solid fa-microchip"></i> PC Components</h2>
+                <p class="cat-home-subtitle">Browse by category — click any component to explore all available products from Jordan's top tech stores.</p>
+            </div>
+            <div class="cat-home-grid" id="cat-home-grid">
+                <!-- Filled dynamically by JavaScript -->
+            </div>
+        </section>
 
         <!-- ================= MAIN LAYOUT ================= -->
-        <main class="main-layout" id="main-layout">
+        <main class="main-layout" id="main-layout" style="display:none;">
             
             <!-- 1. LEFT FILTER COLUMN -->
             <aside class="filter-sidebar glass-panel">
@@ -167,6 +173,13 @@
 
             <!-- 2. RIGHT CATALOG GRID -->
             <section class="catalog-section">
+                <!-- Back to Categories Button -->
+                <div class="back-bar">
+                    <button class="btn-back-categories" id="btn-back-categories">
+                        <i class="fa-solid fa-arrow-left"></i> Back to Categories
+                    </button>
+                    <span class="browsing-label" id="browsing-label"></span>
+                </div>
                 <!-- Sorting & Metadata Toolbar -->
                 <div class="catalog-toolbar glass-panel">
                     <div class="results-meta">
