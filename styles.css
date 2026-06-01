@@ -197,6 +197,7 @@ body {
 .store-pccircle .stat-num { color: var(--neon-cyan); text-shadow: 0 0 4px rgba(0, 255, 204, 0.15); }
 .store-taipei .stat-num { color: #ff007f; text-shadow: 0 0 4px rgba(255, 0, 127, 0.15); }
 .store-mcc .stat-num { color: #10b981; text-shadow: 0 0 4px rgba(16, 185, 129, 0.15); }
+.store-gameon .stat-num { color: #ff3b30; text-shadow: 0 0 4px rgba(255, 59, 48, 0.15); }
 
 /* Glowing Stat Badge Hovers */
 .store-igeek:hover { border-color: rgba(192, 132, 252, 0.45) !important; box-shadow: 0 0 15px rgba(192, 132, 252, 0.25) !important; }
@@ -205,6 +206,7 @@ body {
 .store-pccircle:hover { border-color: rgba(0, 255, 204, 0.45) !important; box-shadow: 0 0 15px rgba(0, 255, 204, 0.25) !important; }
 .store-taipei:hover { border-color: rgba(255, 0, 127, 0.45) !important; box-shadow: 0 0 15px rgba(255, 0, 127, 0.25) !important; }
 .store-mcc:hover { border-color: rgba(16, 185, 129, 0.45) !important; box-shadow: 0 0 15px rgba(16, 185, 129, 0.25) !important; }
+.store-gameon:hover { border-color: rgba(255, 59, 48, 0.45) !important; box-shadow: 0 0 15px rgba(255, 59, 48, 0.25) !important; }
 
 /* ================= CATEGORY HOMEPAGE ================= */
 .category-homepage {
@@ -576,6 +578,7 @@ body {
 .pccircle-check input:checked ~ .checkmark { background-color: var(--neon-cyan); border-color: var(--neon-cyan); box-shadow: var(--glow-cyan); }
 .taipei-check input:checked ~ .checkmark { background-color: #ff007f; border-color: #ff007f; box-shadow: 0 0 10px rgba(255, 0, 127, 0.4); }
 .mcc-check input:checked ~ .checkmark { background-color: #10b981; border-color: #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); }
+.gameon-check input:checked ~ .checkmark { background-color: #ff3b30; border-color: #ff3b30; box-shadow: 0 0 10px rgba(255, 59, 48, 0.4); }
 
 .checkmark:after {
     content: "";
@@ -897,6 +900,7 @@ body {
 .card-pccircle::before { background: linear-gradient(90deg, var(--neon-cyan), transparent); }
 .card-taipei::before { background: linear-gradient(90deg, #ff007f, transparent); }
 .card-mcc::before { background: linear-gradient(90deg, #10b981, transparent); }
+.card-gameon::before { background: linear-gradient(90deg, #ff3b30, transparent); }
 
 .card-top {
     display: flex;
@@ -919,6 +923,7 @@ body {
 .badge-pccircle { background: rgba(0, 255, 204, 0.12); color: #00ffcc; border: 1px solid rgba(0, 255, 204, 0.2); }
 .badge-taipei { background: rgba(255, 0, 127, 0.12); color: #ff007f; border: 1px solid rgba(255, 0, 127, 0.2); }
 .badge-mcc { background: rgba(16, 185, 129, 0.12); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
+.badge-gameon { background: rgba(255, 59, 48, 0.12); color: #ff3b30; border: 1px solid rgba(255, 59, 48, 0.2); }
 
 
 .card-category-badge {
@@ -1733,6 +1738,11 @@ body {
 .card-mcc .fallback-icon {
     color: #10b981;
     filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.45));
+}
+
+.card-gameon .fallback-icon {
+    color: #ff3b30;
+    filter: drop-shadow(0 0 10px rgba(255, 59, 48, 0.45));
 }
 
 

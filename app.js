@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const itemsPerPage = 12;
 
     let selectedCategory = "all";
-    let selectedStores = ["iGeek.jo", "City Center", "Oriental Store", "PC Circle", "Taipei Computer", "MCC Jordan"];
+    let selectedStores = ["iGeek.jo", "City Center", "Oriental Store", "PC Circle", "Taipei Computer", "MCC Jordan", "Game On Jordan"];
     let stockOnly = false;
     let searchQuery = "";
     let sortBy = "price-asc";
@@ -199,6 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let countPcCircle = 0;
         let countTaipei = 0;
         let countMcc = 0;
+        let countGameon = 0;
 
         let minPrice = Infinity;
         let maxPrice = -Infinity;
@@ -212,6 +213,7 @@ document.addEventListener("DOMContentLoaded", () => {
             else if (store === "PC Circle") countPcCircle++;
             else if (store === "Taipei Computer") countTaipei++;
             else if (store === "MCC Jordan") countMcc++;
+            else if (store === "Game On Jordan") countGameon++;
 
             // Min/max prices
             if (p.price_val > 0) {
@@ -234,9 +236,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const badgePcCircle = document.getElementById("stat-pccircle-count");
         const badgeTaipei = document.getElementById("stat-taipei-count");
         const badgeMcc = document.getElementById("stat-mcc-count");
+        const badgeGameon = document.getElementById("stat-gameon-count");
         if (badgePcCircle) badgePcCircle.textContent = countPcCircle.toLocaleString();
         if (badgeTaipei) badgeTaipei.textContent = countTaipei.toLocaleString();
         if (badgeMcc) badgeMcc.textContent = countMcc.toLocaleString();
+        if (badgeGameon) badgeGameon.textContent = countGameon.toLocaleString();
     }
 
     function initializeFilterUI() {
@@ -530,6 +534,9 @@ document.addEventListener("DOMContentLoaded", () => {
             } else if (product["Website Name"] === "MCC Jordan") {
                 storeClass = "card-mcc";
                 storeBadge = "badge-mcc";
+            } else if (product["Website Name"] === "Game On Jordan") {
+                storeClass = "card-gameon";
+                storeBadge = "badge-gameon";
             }
 
             const cardHTML = `
@@ -709,6 +716,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 else if (product["Website Name"] === "PC Circle") storeLabelClass = "badge-pccircle";
                 else if (product["Website Name"] === "Taipei Computer") storeLabelClass = "badge-taipei";
                 else if (product["Website Name"] === "MCC Jordan") storeLabelClass = "badge-mcc";
+                else if (product["Website Name"] === "Game On Jordan") storeLabelClass = "badge-gameon";
 
                 slot.innerHTML = `
                     <div class="slot-filled-content">
@@ -795,6 +803,7 @@ document.addEventListener("DOMContentLoaded", () => {
             else if (item["Website Name"] === "PC Circle") storeBadge = "badge-pccircle";
             else if (item["Website Name"] === "Taipei Computer") storeBadge = "badge-taipei";
             else if (item["Website Name"] === "MCC Jordan") storeBadge = "badge-mcc";
+            else if (item["Website Name"] === "Game On Jordan") storeBadge = "badge-gameon";
 
             const isOutOfStock = item.Status === "Out of Stock";
             const isComingSoon = item.Status === "Coming Soon";
@@ -898,7 +907,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (allCatBtn) allCatBtn.classList.add("active");
 
         // Reset Stores Checkbox
-        selectedStores = ["iGeek.jo", "City Center", "Oriental Store", "PC Circle", "Taipei Computer", "MCC Jordan"];
+        selectedStores = ["iGeek.jo", "City Center", "Oriental Store", "PC Circle", "Taipei Computer", "MCC Jordan", "Game On Jordan"];
         storeFilters.forEach(cb => cb.checked = true);
 
         // Reset Price
