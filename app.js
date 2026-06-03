@@ -22,6 +22,114 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentFilterMin = 0;
     let currentFilterMax = 2500;
 
+    // Active spec filters: Set of spec filter keys currently toggled ON
+    let activeSpecFilters = new Set();
+
+    // ---- SPEC FILTER DEFINITIONS PER CATEGORY ----
+    // Each entry: { key, label, icon, match(product) } 
+    const SPEC_FILTERS = {
+        "Monitor": [
+            { group: "Response Time", filters: [
+                { key: "ms_0.3",  label: "0.3ms",  icon: "fa-bolt",       match: p => p.response_time && parseFloat(p.response_time) <= 0.3 },
+                { key: "ms_1",    label: "1ms",    icon: "fa-bolt",       match: p => p.response_time && parseFloat(p.response_time) <= 1 },
+            ]},
+            { group: "Screen Size", filters: [
+                { key: "inch_25",  label: "25.4\"",  icon: "fa-expand",    match: p => p.screen_size && parseFloat(p.screen_size) >= 24 && parseFloat(p.screen_size) <= 26 },
+                { key: "inch_27",  label: "27\"",    icon: "fa-expand",    match: p => p.screen_size && parseFloat(p.screen_size) >= 26.5 && parseFloat(p.screen_size) <= 28 },
+                { key: "inch_32",  label: "32\"",    icon: "fa-expand",    match: p => p.screen_size && parseFloat(p.screen_size) >= 31 && parseFloat(p.screen_size) <= 33 },
+                { key: "inch_34",  label: "34\"",    icon: "fa-expand",    match: p => p.screen_size && parseFloat(p.screen_size) >= 33.5 && parseFloat(p.screen_size) <= 35 },
+            ]},
+            { group: "Refresh Rate", filters: [
+                { key: "hz_144",  label: "144Hz",  icon: "fa-gauge-high", match: p => p.refresh_rate && parseInt(p.refresh_rate) >= 144 },
+                { key: "hz_240",  label: "240Hz",  icon: "fa-gauge-high", match: p => p.refresh_rate && parseInt(p.refresh_rate) >= 240 },
+                { key: "hz_310",  label: "310Hz+", icon: "fa-gauge-high", match: p => p.refresh_rate && parseInt(p.refresh_rate) >= 310 },
+            ]},
+            { group: "Resolution", filters: [
+                { key: "res_1080", label: "1080p",  icon: "fa-tv",         match: p => /1080|fhd|full.?hd/i.test(p["Full Name"]) },
+                { key: "res_4k",   label: "4K",     icon: "fa-tv",         match: p => /4k|uhd|3840/i.test(p["Full Name"]) },
+                { key: "fps_60",   label: "60fps",  icon: "fa-film",       match: p => p.refresh_rate && parseInt(p.refresh_rate) === 60 },
+                { key: "fps_120",  label: "120fps", icon: "fa-film",       match: p => p.refresh_rate && parseInt(p.refresh_rate) >= 120 },
+            ]},
+        ],
+        "Monitor Arm": [
+            { group: "Weight Capacity", filters: [
+                { key: "wt_9",   label: "9kg",     icon: "fa-weight-hanging", match: p => { const w = parseFloat(String(p.weight_support||"")); return w >= 9; } },
+                { key: "wt_12",  label: "12kg+",   icon: "fa-weight-hanging", match: p => { const w = parseFloat(String(p.weight_support||"")); return w >= 12; } },
+            ]},
+            { group: "Arm Type", filters: [
+                { key: "arm_single", label: "Single Arm", icon: "fa-circle-nodes", match: p => p.arms_supported == 1 },
+                { key: "arm_dual",   label: "Dual Arm",   icon: "fa-circle-nodes", match: p => p.arms_supported == 2 },
+            ]},
+        ],
+        "GPU": [
+            { group: "VRAM", filters: [
+                { key: "vram_8",   label: "8GB VRAM",  icon: "fa-server", match: p => /\b8\s*gb/i.test(p["Full Name"]) },
+                { key: "vram_16",  label: "16GB VRAM", icon: "fa-server", match: p => /\b16\s*gb/i.test(p["Full Name"]) },
+            ]},
+        ],
+        "Processor": [
+            { group: "Clock Speed", filters: [
+                { key: "ghz_3.5", label: "3.5GHz+", icon: "fa-microchip", match: p => /3\.[5-9]ghz|[4-9]\.[0-9]ghz/i.test(p["Full Name"]) },
+                { key: "ghz_5.5", label: "5.5GHz+", icon: "fa-microchip", match: p => /5\.[5-9]ghz|[6-9]\.[0-9]ghz/i.test(p["Full Name"]) },
+            ]},
+        ],
+        "SSD": [
+            { group: "Capacity", filters: [
+                { key: "ssd_250",  label: "250GB",  icon: "fa-database", match: p => /250gb|256gb/i.test(p["Full Name"]) },
+                { key: "ssd_500",  label: "500GB",  icon: "fa-database", match: p => /500gb|512gb/i.test(p["Full Name"]) },
+                { key: "ssd_1tb",  label: "1TB",    icon: "fa-database", match: p => /\b1\s*tb\b/i.test(p["Full Name"]) },
+                { key: "ssd_2tb",  label: "2TB",    icon: "fa-database", match: p => /\b2\s*tb\b/i.test(p["Full Name"]) },
+                { key: "ssd_4tb",  label: "4TB",    icon: "fa-database", match: p => /\b4\s*tb\b/i.test(p["Full Name"]) },
+            ]},
+        ],
+        "Hard Disk": [
+            { group: "Capacity", filters: [
+                { key: "hdd_500",  label: "500GB",  icon: "fa-hdd", match: p => /500gb|512gb/i.test(p["Full Name"]) },
+                { key: "hdd_1tb",  label: "1TB",    icon: "fa-hdd", match: p => /\b1\s*tb\b/i.test(p["Full Name"]) },
+                { key: "hdd_2tb",  label: "2TB",    icon: "fa-hdd", match: p => /\b2\s*tb\b/i.test(p["Full Name"]) },
+                { key: "hdd_4tb",  label: "4TB",    icon: "fa-hdd", match: p => /\b4\s*tb\b/i.test(p["Full Name"]) },
+            ]},
+        ],
+        "PSU": [
+            { group: "Wattage", filters: [
+                { key: "psu_550",  label: "550W",  icon: "fa-plug", match: p => /\b550w\b/i.test(p["Full Name"]) },
+                { key: "psu_650",  label: "650W",  icon: "fa-plug", match: p => /\b650w\b/i.test(p["Full Name"]) },
+                { key: "psu_750",  label: "750W",  icon: "fa-plug", match: p => /\b750w\b/i.test(p["Full Name"]) },
+            ]},
+        ],
+        "Controllers": [
+            { group: "Platform", filters: [
+                { key: "ctrl_xboxsx",  label: "Xbox Series X/S", icon: "fa-gamepad", match: p => /xbox.series/i.test(p["Full Name"]) },
+                { key: "ctrl_xboxone", label: "Xbox One",       icon: "fa-gamepad", match: p => /xbox.one/i.test(p["Full Name"]) },
+                { key: "ctrl_ps4",     label: "PS4",            icon: "fa-gamepad", match: p => /ps4|dualshock/i.test(p["Full Name"]) },
+                { key: "ctrl_ps5",     label: "PS5",            icon: "fa-gamepad", match: p => /ps5|dualsense/i.test(p["Full Name"]) },
+            ]},
+        ],
+        "Peripherals": [
+            { group: "Device Type", filters: [
+                { key: "peri_mouse",    label: "Mouse",    icon: "fa-computer-mouse", match: p => /mouse|mice/i.test(p["Full Name"]) },
+                { key: "peri_keyboard", label: "Keyboard", icon: "fa-keyboard",       match: p => /keyboard/i.test(p["Full Name"]) },
+                { key: "peri_headset",  label: "Headset",  icon: "fa-headphones",     match: p => /headset/i.test(p["Full Name"]) },
+            ]},
+        ],
+        "Audio Gear": [
+            { group: "Device Type", filters: [
+                { key: "audio_headset",   label: "Headset",    icon: "fa-headphones",    match: p => /headset/i.test(p["Full Name"]) },
+                { key: "audio_earphone",  label: "Earphones",  icon: "fa-headphones",    match: p => /earphone|earbud|in.ear/i.test(p["Full Name"]) },
+            ]},
+        ],
+        "Webcams": [
+            { group: "Resolution", filters: [
+                { key: "cam_1080", label: "1080p",  icon: "fa-video", match: p => /1080/i.test(p["Full Name"]) },
+                { key: "cam_4k",   label: "4K",     icon: "fa-video", match: p => /4k|2160/i.test(p["Full Name"]) },
+            ]},
+            { group: "Frame Rate", filters: [
+                { key: "cam_60fps",  label: "60fps",  icon: "fa-film", match: p => /60fps|60 fps/i.test(p["Full Name"]) },
+                { key: "cam_120fps", label: "120fps", icon: "fa-film", match: p => /120fps|120 fps/i.test(p["Full Name"]) },
+            ]},
+        ],
+    };
+
     // Category details with specific icons mapping
     const CATEGORY_MAP = {
         "Monitor": { label: "Monitors", icon: "fa-desktop", emoji: "🖥️", color: "#00b4d8", desc: "Full HD, QHD & 4K displays", tags: ["Full HD", "QHD", "4K", "Curved", "IPS", "VA", "144Hz", "240Hz"] },
@@ -286,6 +394,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 categoryButtons.forEach(b => b.classList.remove("active"));
                 btn.classList.add("active");
                 selectedCategory = btn.getAttribute("data-category");
+                activeSpecFilters.clear();
+                renderSpecFilterUI(selectedCategory);
                 currentPage = 1;
                 applyFiltersAndSorting();
             });
@@ -304,6 +414,78 @@ document.addEventListener("DOMContentLoaded", () => {
         sliderMax.value = dataPriceMax;
 
         updateSliderTrack();
+
+        // 3. Set up Spec Filter clear button
+        const btnClearSpecFilters = document.getElementById("btn-clear-spec-filters");
+        if (btnClearSpecFilters) {
+            btnClearSpecFilters.addEventListener("click", () => {
+                activeSpecFilters.clear();
+                renderSpecFilterUI(selectedCategory);
+                currentPage = 1;
+                applyFiltersAndSorting();
+            });
+        }
+    }
+
+    // ---- Render spec filter pills for current category ----
+    function renderSpecFilterUI(categoryKey) {
+        const specGroup = document.getElementById("spec-filter-group");
+        const specContainer = document.getElementById("spec-filters-container");
+        if (!specGroup || !specContainer) return;
+
+        const specs = SPEC_FILTERS[categoryKey];
+        if (!specs || specs.length === 0) {
+            specGroup.style.display = "none";
+            specContainer.innerHTML = "";
+            return;
+        }
+
+        specGroup.style.display = "flex";
+        let html = "";
+        specs.forEach(group => {
+            html += `<div class="spec-filter-group-section">`;
+            html += `<span class="spec-filter-group-label">${group.group}</span>`;
+            html += `<div class="spec-filter-pills">`;
+            group.filters.forEach(f => {
+                const isActive = activeSpecFilters.has(f.key);
+                html += `
+                    <button class="spec-filter-pill ${isActive ? 'active' : ''}" data-spec-key="${f.key}">
+                        <i class="fa-solid ${f.icon}"></i>
+                        ${f.label}
+                    </button>`;
+            });
+            html += `</div></div>`;
+        });
+        specContainer.innerHTML = html;
+
+        // Bind click events to spec pills
+        specContainer.querySelectorAll(".spec-filter-pill").forEach(pill => {
+            pill.addEventListener("click", () => {
+                const key = pill.getAttribute("data-spec-key");
+                if (activeSpecFilters.has(key)) {
+                    activeSpecFilters.delete(key);
+                    pill.classList.remove("active");
+                } else {
+                    activeSpecFilters.add(key);
+                    pill.classList.add("active");
+                }
+                currentPage = 1;
+                applyFiltersAndSorting();
+            });
+        });
+    }
+
+    // ---- Return the flat list of filter definitions for current active spec filters ----
+    function getActiveSpecFilterMatchers() {
+        const specs = SPEC_FILTERS[selectedCategory];
+        if (!specs || activeSpecFilters.size === 0) return [];
+        const matchers = [];
+        specs.forEach(group => {
+            group.filters.forEach(f => {
+                if (activeSpecFilters.has(f.key)) matchers.push(f);
+            });
+        });
+        return matchers;
     }
 
     // ================= CATEGORY HOMEPAGE =================
@@ -347,6 +529,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function goToCategory(categoryKey) {
         selectedCategory = categoryKey;
         currentPage = 1;
+        activeSpecFilters.clear();
 
         // Update sidebar category buttons
         const categoryButtons = document.querySelectorAll(".btn-category");
@@ -367,6 +550,9 @@ document.addEventListener("DOMContentLoaded", () => {
         catHomepage.style.display = "none";
         mainLayout.style.display = "";
 
+        // Render category-specific spec filter pills
+        renderSpecFilterUI(categoryKey);
+
         applyFiltersAndSorting();
     }
 
@@ -374,16 +560,23 @@ document.addEventListener("DOMContentLoaded", () => {
         catHomepage.style.display = "";
         mainLayout.style.display = "none";
         selectedCategory = "all";
+        activeSpecFilters.clear();
 
         // Reset sidebar category
         const categoryButtons = document.querySelectorAll(".btn-category");
         categoryButtons.forEach(b => {
             b.classList.toggle("active", b.getAttribute("data-category") === "all");
         });
+
+        // Hide spec filters
+        const specGroup = document.getElementById("spec-filter-group");
+        if (specGroup) specGroup.style.display = "none";
     }
 
     // ================= 2. FILTERING AND SORTING ACTIONS =================
     function applyFiltersAndSorting() {
+        const activeMatchers = getActiveSpecFilterMatchers();
+
         // 1. Apply active filter rules
         filteredProducts = allProducts.filter(p => {
             // Check Store origin
@@ -397,6 +590,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Check Price boundaries
             if (p.price_val < currentFilterMin || p.price_val > currentFilterMax) return false;
+
+            // Check Spec Filters (OR within same group, AND across groups)
+            if (activeMatchers.length > 0) {
+                // Group matchers by their group name to apply OR within group, AND across
+                const specs = SPEC_FILTERS[selectedCategory] || [];
+                const groupedActive = {};
+                specs.forEach(group => {
+                    group.filters.forEach(f => {
+                        if (activeSpecFilters.has(f.key)) {
+                            if (!groupedActive[group.group]) groupedActive[group.group] = [];
+                            groupedActive[group.group].push(f);
+                        }
+                    });
+                });
+                // Each group must match at least one of its selected filters (OR)
+                // All groups must match (AND)
+                const allGroupsMatch = Object.values(groupedActive).every(groupFilters =>
+                    groupFilters.some(f => f.match(p))
+                );
+                if (!allGroupsMatch) return false;
+            }
 
             // Check Search query
             if (searchQuery) {
@@ -954,6 +1168,11 @@ document.addEventListener("DOMContentLoaded", () => {
         // Reset Stock toggle
         stockOnly = false;
         stockToggle.checked = false;
+
+        // Reset Spec Filters
+        activeSpecFilters.clear();
+        const specGroup = document.getElementById("spec-filter-group");
+        if (specGroup) specGroup.style.display = "none";
 
         currentPage = 1;
         applyFiltersAndSorting();

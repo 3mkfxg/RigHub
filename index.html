@@ -16,7 +16,7 @@
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- App Stylesheet -->
-    <link rel="stylesheet" href="styles.css?v=1.0.3">
+    <link rel="stylesheet" href="styles.css?v=1.1.0">
 </head>
 <body class="dark-theme">
 
@@ -214,6 +214,19 @@
                 <div class="filter-group">
                     <label class="group-label">Category</label>
                     <div class="category-grid" id="category-filter-list">
+                        <!-- Filled dynamically by JS -->
+                    </div>
+                </div>
+
+                <!-- Spec Quick Filters (shown per category) -->
+                <div class="filter-group" id="spec-filter-group" style="display:none;">
+                    <div class="spec-filter-header">
+                        <label class="group-label">Quick Spec Filters</label>
+                        <button class="btn-clear-spec-filters" id="btn-clear-spec-filters" title="Clear spec filters">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    <div class="spec-filters-container" id="spec-filters-container">
                         <!-- Filled dynamically by JS -->
                     </div>
                 </div>
