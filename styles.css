@@ -588,6 +588,7 @@ body.dark-theme .stat-badge-total {
     color: var(--text-secondary);
     max-width: 480px;
 }
+
 /* ---- Category Card Grid: Big Tiles ---- */
 .cat-home-grid {
     display: grid;
@@ -604,11 +605,11 @@ body.dark-theme .stat-badge-total {
     cursor: pointer;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
     border: 2.5px solid var(--cat-color, var(--orange));
-    
+
     /* Mix category color heavily (45%) with page card background for full colored style */
     background: var(--bg-card);
     background: color-mix(in srgb, var(--cat-color, var(--orange)) 45%, var(--bg-card));
-    
+
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -616,9 +617,9 @@ body.dark-theme .stat-badge-total {
     padding: 24px 18px;
     text-align: center;
     transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1),
-                box-shadow 0.35s cubic-bezier(0.25, 0.8, 0.25, 1),
-                background 0.35s cubic-bezier(0.25, 0.8, 0.25, 1),
-                border-color 0.35s ease;
+        box-shadow 0.35s cubic-bezier(0.25, 0.8, 0.25, 1),
+        background 0.35s cubic-bezier(0.25, 0.8, 0.25, 1),
+        border-color 0.35s ease;
 }
 
 /* Hover state: Card scaling, glow, background tint boost */
@@ -635,7 +636,7 @@ body.dark-theme .stat-badge-total {
     color: var(--cat-color, var(--orange));
     margin-bottom: 12px;
     transition: transform 0.4s cubic-bezier(0.25, 1.5, 0.5, 1),
-                filter 0.35s ease;
+        filter 0.35s ease;
     display: inline-block;
 }
 
@@ -649,6 +650,7 @@ body.dark-theme .stat-badge-total {
     0% {
         transform: scale(1.15) translateY(-4px);
     }
+
     100% {
         transform: scale(1.15) translateY(-10px);
     }
@@ -708,8 +710,8 @@ body.light-theme .cat-home-card-count-badge {
     gap: 6px;
     margin-top: 0;
     transition: max-height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
-                opacity 0.35s ease,
-                margin-top 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        opacity 0.35s ease,
+        margin-top 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .cat-home-card:hover .cat-home-tags-reveal {
@@ -748,8 +750,8 @@ body.light-theme .cat-home-tag-pill {
 }
 
 /* ===================================================================== */
-   MAIN LAYOUT (Catalog View)
-   ===================================================================== */
+/* MAIN LAYOUT (Catalog View) ========================================== */
+/* ===================================================================== */
 .main-layout {
     display: grid;
     grid-template-columns: 280px 1fr;
