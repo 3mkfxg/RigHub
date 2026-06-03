@@ -24,25 +24,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Category details with specific icons mapping
     const CATEGORY_MAP = {
-        "Monitor": { label: "Monitors", icon: "fa-desktop", emoji: "🖥️", color: "#00ffcc", desc: "Full HD, QHD & 4K displays" },
-        "Monitor Arm": { label: "Monitor Arms", icon: "fa-dolly", emoji: "🦾", color: "#a78bfa", desc: "Single, dual & triple mounts" },
-        "GPU": { label: "Graphics Cards", icon: "fa-server", emoji: "🎮", color: "#f97316", desc: "NVIDIA & AMD gaming GPUs" },
-        "Processor": { label: "Processors (CPU)", icon: "fa-microchip", emoji: "🔲", color: "#60a5fa", desc: "Intel Core & AMD Ryzen" },
-        "Motherboard": { label: "Motherboards", icon: "fa-chess-board", emoji: "🗜️", color: "#34d399", desc: "ATX, mATX & ITX boards" },
-        "RAM": { label: "Memory (RAM)", icon: "fa-memory", emoji: "🧩", color: "#f472b6", desc: "DDR4 & DDR5 memory kits" },
-        "SSD": { label: "SSDs (M.2/SATA)", icon: "fa-database", emoji: "💾", color: "#fbbf24", desc: "NVMe M.2 & SATA drives" },
-        "Hard Disk": { label: "Hard Disks (HDD)", icon: "fa-hdd", emoji: "💿", color: "#94a3b8", desc: "High-capacity storage drives" },
-        "Case": { label: "PC Cases", icon: "fa-box", emoji: "🖥", color: "#e879f9", desc: "ATX towers & compact cases" },
-        "PSU": { label: "Power Supplies", icon: "fa-plug", emoji: "⚡", color: "#facc15", desc: "Modular & semi-modular PSUs" },
-        "Fan": { label: "Fans & Coolers", icon: "fa-fan", emoji: "🌀", color: "#38bdf8", desc: "Air coolers & AIO liquid cooling" },
-        // Streaming & Gaming Accessories Categories
-        "Peripherals": { label: "Peripherals", icon: "fa-keyboard", emoji: "⌨️", color: "#00ffcc", desc: "Mice, keyboards & mouse pads" },
-        "Controllers": { label: "Controllers", icon: "fa-gamepad", emoji: "🎮", color: "#ff007f", desc: "Console & PC game controllers" },
-        "Audio Gear": { label: "Audio Gear", icon: "fa-headphones", emoji: "🎧", color: "#a78bfa", desc: "Headsets, microphones & speakers" },
-        "Stream Gear": { label: "Stream Gear", icon: "fa-sliders", emoji: "🎙️", color: "#fbbf24", desc: "Stream decks, mixers & mic stands" },
-        "Lighting & RGB": { label: "Lighting & RGB", icon: "fa-lightbulb", emoji: "💡", color: "#f472b6", desc: "RGB lights & led strip light strips" },
-        "Desks & Chairs": { label: "Desks & Chairs", icon: "fa-chair", emoji: "💺", color: "#10b981", desc: "Gaming chairs & gaming tables" },
-        "Webcams": { label: "Webcams", icon: "fa-video", emoji: "📷", color: "#38bdf8", desc: "High-resolution webcams" }
+        "Monitor":        { label: "Monitors",          icon: "fa-desktop",     emoji: "🖥️",  color: "#00b4d8", desc: "Full HD, QHD & 4K displays",           tags: ["Full HD", "QHD", "4K", "Curved", "IPS", "VA", "144Hz", "240Hz"] },
+        "Monitor Arm":    { label: "Monitor Arms",      icon: "fa-dolly",       emoji: "🦾",  color: "#a78bfa", desc: "Single, dual & triple mounts",         tags: ["Single Arm", "Dual Arm", "Triple Arm", "Gas Spring", "VESA 75/100"] },
+        "GPU":            { label: "Graphics Cards",    icon: "fa-server",      emoji: "🎮",  color: "#f97316", desc: "NVIDIA & AMD gaming GPUs",            tags: ["NVIDIA RTX", "AMD RX", "4GB VRAM", "8GB VRAM", "16GB VRAM", "DLSS"] },
+        "Processor":      { label: "Processors (CPU)",  icon: "fa-microchip",   emoji: "🔲",  color: "#3b82f6", desc: "Intel Core & AMD Ryzen",              tags: ["Intel Core i5", "Intel Core i7", "Intel Core i9", "AMD Ryzen 5", "AMD Ryzen 7"] },
+        "Motherboard":    { label: "Motherboards",      icon: "fa-chess-board", emoji: "🗜️",  color: "#34d399", desc: "ATX, mATX & ITX boards",              tags: ["ATX", "mATX", "Mini-ITX", "LGA1700", "AM5", "DDR4", "DDR5"] },
+        "RAM":            { label: "Memory (RAM)",      icon: "fa-memory",      emoji: "🧩",  color: "#ec4899", desc: "DDR4 & DDR5 memory kits",             tags: ["DDR4", "DDR5", "8GB", "16GB", "32GB", "64GB", "RGB", "3200MHz", "6000MHz"] },
+        "SSD":            { label: "SSDs (M.2/SATA)",   icon: "fa-database",    emoji: "💾",  color: "#f59e0b", desc: "NVMe M.2 & SATA drives",             tags: ["NVMe M.2", "SATA SSD", "250GB", "500GB", "1TB", "2TB", "PCIe Gen 4"] },
+        "Hard Disk":      { label: "Hard Disks (HDD)",  icon: "fa-hdd",         emoji: "💿",  color: "#94a3b8", desc: "High-capacity storage drives",       tags: ["1TB", "2TB", "4TB", "6TB", "8TB", "7200 RPM", "NAS Grade"] },
+        "Case":           { label: "PC Cases",          icon: "fa-box",         emoji: "🖥",  color: "#d946ef", desc: "ATX towers & compact cases",         tags: ["Full Tower", "Mid Tower", "Mini-ITX", "RGB", "Tempered Glass", "White"] },
+        "PSU":            { label: "Power Supplies",    icon: "fa-plug",        emoji: "⚡",  color: "#eab308", desc: "Modular & semi-modular PSUs",        tags: ["550W", "650W", "750W", "850W", "1000W", "80+ Gold", "80+ Platinum", "Fully Modular"] },
+        "Fan":            { label: "Fans & Coolers",    icon: "fa-fan",         emoji: "🌀",  color: "#38bdf8", desc: "Air coolers & AIO liquid cooling",  tags: ["Air Cooler", "120mm AIO", "240mm AIO", "360mm AIO", "ARGB", "Low Profile"] },
+        "Peripherals":    { label: "Peripherals",       icon: "fa-keyboard",    emoji: "⌨️",  color: "#06b6d4", desc: "Mice, keyboards & mouse pads",      tags: ["Gaming Mouse", "Mechanical KB", "Mouse Pad", "Wireless", "Wired", "TKL", "60%"] },
+        "Controllers":    { label: "Controllers",       icon: "fa-gamepad",     emoji: "🎮",  color: "#f43f5e", desc: "Console & PC game controllers",    tags: ["Xbox", "PlayStation", "PC USB", "Wireless", "Wired", "Fight Stick"] },
+        "Audio Gear":     { label: "Audio Gear",        icon: "fa-headphones",  emoji: "🎧",  color: "#8b5cf6", desc: "Headsets, microphones & speakers",  tags: ["Gaming Headset", "Studio Mic", "USB Mic", "XLR", "7.1 Surround", "Active Noise Cancel"] },
+        "Stream Gear":    { label: "Stream Gear",       icon: "fa-sliders",     emoji: "🎙️",  color: "#f97316", desc: "Stream decks, mixers & mic stands", tags: ["Stream Deck", "Audio Mixer", "Mic Arm", "Shock Mount", "Elgato", "Rode"] },
+        "Lighting & RGB": { label: "Lighting & RGB",   icon: "fa-lightbulb",   emoji: "💡",  color: "#ec4899", desc: "RGB lights & LED strip lights",     tags: ["LED Strip", "RGB Hub", "Ambient Light", "Corner Lamp", "Smart LED", "Govee"] },
+        "Desks & Chairs": { label: "Desks & Chairs",   icon: "fa-chair",       emoji: "💺",  color: "#10b981", desc: "Gaming chairs & gaming tables",    tags: ["Gaming Chair", "Ergonomic Chair", "Standing Desk", "L-Shape Desk", "Desk Mat"] },
+        "Webcams":        { label: "Webcams",           icon: "fa-video",       emoji: "📷",  color: "#0ea5e9", desc: "High-resolution webcams",          tags: ["1080p", "4K", "60fps", "Auto Focus", "Privacy Cover", "Ring Light", "Streaming"] }
     };
 
     // DOM ELEMENTS
@@ -314,20 +313,50 @@ document.addEventListener("DOMContentLoaded", () => {
             const cat = CATEGORY_MAP[key];
             const count = allProducts.filter(p => p.category_key === key).length;
             if (count === 0) return; // hide empty categories
+
+            // Build overlay tag pills HTML
+            const tagsHTML = (cat.tags || []).map(t =>
+                `<span class="cat-overlay-tag">${t}</span>`
+            ).join("");
+
             const card = document.createElement("div");
             card.className = "cat-home-card";
             card.setAttribute("data-category", key);
             card.style.setProperty("--cat-color", cat.color);
+
             card.innerHTML = `
-                <div class="cat-home-card-icon">
-                    <i class="fa-solid ${cat.icon}"></i>
-                </div>
-                <div class="cat-home-card-info">
+                <!-- FRONT: always visible -->
+                <div class="cat-home-card-front">
+                    <div class="cat-home-card-icon">
+                        <i class="fa-solid ${cat.icon}"></i>
+                    </div>
                     <h3>${cat.label}</h3>
-                    <p>${cat.desc}</p>
-                    <span class="cat-home-card-count">${count.toLocaleString()} items</span>
+                    <span class="cat-home-card-count-badge">
+                        <i class="fa-solid fa-tag"></i> ${count.toLocaleString()} items
+                    </span>
+                </div>
+
+                <!-- OVERLAY: slides up on hover -->
+                <div class="cat-home-card-overlay">
+                    <div class="cat-overlay-header">
+                        <div class="cat-overlay-icon">
+                            <i class="fa-solid ${cat.icon}"></i>
+                        </div>
+                        <span class="cat-overlay-title">${cat.label}</span>
+                    </div>
+                    <div class="cat-overlay-tags">${tagsHTML}</div>
+                    <div class="cat-overlay-footer">
+                        <span class="cat-overlay-count">
+                            <i class="fa-solid fa-layer-group"></i>
+                            ${count.toLocaleString()} products
+                        </span>
+                        <span class="cat-overlay-cta">
+                            Browse <i class="fa-solid fa-arrow-right"></i>
+                        </span>
+                    </div>
                 </div>
             `;
+
             card.addEventListener("click", () => {
                 goToCategory(key);
             });
