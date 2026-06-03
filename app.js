@@ -92,37 +92,55 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnThemeToggle = document.getElementById("theme-toggle-btn");
     const themeIcon = document.getElementById("theme-icon");
 
-    // Initialize Theme state (Default to Dark)
-    const storedTheme = localStorage.getItem("theme") || "dark";
-    if (storedTheme === "light") {
-        document.body.classList.add("light-theme");
-        if (themeIcon) {
-            themeIcon.className = "fa-solid fa-sun";
-        }
+    // Initialize Theme state (Default to Light — dark-theme class enables dark mode)
+    const storedTheme = localStorage.getItem("theme") || "light";
+    if (storedTheme === "dark") {
+        document.body.classList.add("dark-theme");
+        if (themeIcon) themeIcon.className = "fa-solid fa-sun";
     } else {
-        document.body.classList.remove("light-theme");
-        if (themeIcon) {
-            themeIcon.className = "fa-solid fa-moon";
-        }
+        document.body.classList.remove("dark-theme");
+        if (themeIcon) themeIcon.className = "fa-solid fa-moon";
     }
 
     if (btnThemeToggle) {
         btnThemeToggle.addEventListener("click", () => {
-            const isLight = document.body.classList.toggle("light-theme");
-            localStorage.setItem("theme", isLight ? "light" : "dark");
-            
+            const isDark = document.body.classList.toggle("dark-theme");
+            localStorage.setItem("theme", isDark ? "dark" : "light");
+
             if (themeIcon) {
-                // Rotation/scale transition effect
                 themeIcon.style.transition = "transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease";
                 themeIcon.style.transform = "scale(0) rotate(-90deg)";
                 themeIcon.style.opacity = "0";
-                
                 setTimeout(() => {
-                    themeIcon.className = isLight ? "fa-solid fa-sun" : "fa-solid fa-moon";
+                    themeIcon.className = isDark ? "fa-solid fa-sun" : "fa-solid fa-moon";
                     themeIcon.style.transform = "scale(1) rotate(0deg)";
                     themeIcon.style.opacity = "1";
                 }, 200);
             }
+        });
+    }
+
+    // ---- Header search bar syncing ----
+    const headerSearchBar = document.getElementById("header-search-bar");
+    if (headerSearchBar) {
+        let headerTypingTimer;
+        headerSearchBar.addEventListener("input", () => {
+            clearTimeout(headerTypingTimer);
+            const val = headerSearchBar.value.trim();
+            // Sync to sidebar search input
+            if (searchInput) {
+                searchInput.value = val;
+                btnClearSearch.style.display = val.length > 0 ? "block" : "none";
+            }
+            searchQuery = val;
+            // If we are on the homepage and user types, jump to All category
+            if (val.length > 0 && catHomepage.style.display !== "none") {
+                goToCategory("all");
+            }
+            headerTypingTimer = setTimeout(() => {
+                currentPage = 1;
+                applyFiltersAndSorting();
+            }, 300);
         });
     }
 
@@ -295,11 +313,13 @@ document.addEventListener("DOMContentLoaded", () => {
         Object.keys(CATEGORY_MAP).forEach(key => {
             const cat = CATEGORY_MAP[key];
             const count = allProducts.filter(p => p.category_key === key).length;
+            if (count === 0) return; // hide empty categories
             const card = document.createElement("div");
             card.className = "cat-home-card";
             card.setAttribute("data-category", key);
+            card.style.setProperty("--cat-color", cat.color);
             card.innerHTML = `
-                <div class="cat-home-card-icon" style="--cat-color: ${cat.color}">
+                <div class="cat-home-card-icon">
                     <i class="fa-solid ${cat.icon}"></i>
                 </div>
                 <div class="cat-home-card-info">
@@ -307,7 +327,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     <p>${cat.desc}</p>
                     <span class="cat-home-card-count">${count.toLocaleString()} items</span>
                 </div>
-                <i class="fa-solid fa-chevron-right cat-home-arrow"></i>
             `;
             card.addEventListener("click", () => {
                 goToCategory(key);
@@ -328,7 +347,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const cat = CATEGORY_MAP[categoryKey];
         if (browsingLabel) {
-            browsingLabel.innerHTML = `<i class="fa-solid ${cat.icon}" style="color:${cat.color}"></i> Browsing: <strong style="color:${cat.color}">${cat.label}</strong>`;
+            if (cat) {
+                browsingLabel.innerHTML = `<i class="fa-solid ${cat.icon}" style="color:${cat.color}"></i> Browsing: <strong style="color:${cat.color}">${cat.label}</strong>`;
+            } else {
+                browsingLabel.innerHTML = `<i class="fa-solid fa-border-all" style="color:var(--orange)"></i> Browsing: <strong style="color:var(--orange)">All Categories</strong>`;
+            }
         }
 
         // Show catalog, hide homepage
@@ -1070,49 +1093,53 @@ document.addEventListener("DOMContentLoaded", () => {
         return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     }
 
-    // Dynamic neon Toast Notification popup alert
+    // Toast Notification popup (theme-aware)
     function showNotification(message, type = "success") {
         const toast = document.createElement("div");
-        toast.className = `toast-neon ${type === "error" ? "toast-error" : ""}`;
         toast.innerHTML = `
-            <i class="fa-solid ${type === "error" ? "fa-circle-exclamation" : "fa-circle-info"}"></i>
+            <i class="fa-solid ${type === "error" ? "fa-circle-exclamation" : "fa-circle-check"}"></i>
             <span>${message}</span>
         `;
 
-        // CSS properties inject for dynamic toast alerts
-        toast.style.position = "fixed";
-        toast.style.top = "30px";
-        toast.style.right = "30px";
-        toast.style.background = "var(--bg-panel)";
-        toast.style.border = `1px solid ${type === "error" ? "var(--neon-coral)" : "var(--neon-cyan)"}`;
-        toast.style.color = "var(--text-white)";
-        toast.style.padding = "14px 20px";
-        toast.style.borderRadius = "10px";
-        toast.style.fontSize = "0.88rem";
-        toast.style.fontWeight = "500";
-        toast.style.display = "flex";
-        toast.style.alignItems = "center";
-        toast.style.gap = "10px";
-        toast.style.boxShadow = type === "error" ? "0 0 15px rgba(248,113,113,0.3)" : "var(--glow-cyan)";
-        toast.style.zIndex = "99999";
-        toast.style.opacity = "0";
-        toast.style.transform = "translateY(-20px)";
-        toast.style.transition = "all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.15)";
+        const isDark = document.body.classList.contains("dark-theme");
+        const isError = type === "error";
+
+        Object.assign(toast.style, {
+            position: "fixed",
+            top: "86px",
+            right: "24px",
+            background: isDark ? "#1e2235" : "#ffffff",
+            border: `1.5px solid ${isError ? "#ef4444" : "#f97316"  }`,
+            color: isDark ? "#f1f5f9" : "#1a1a2e",
+            padding: "13px 18px",
+            borderRadius: "10px",
+            fontSize: "0.875rem",
+            fontWeight: "500",
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            boxShadow: "0 4px 20px rgba(0,0,0,0.12)",
+            zIndex: "99999",
+            opacity: "0",
+            transform: "translateX(20px)",
+            transition: "all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.15)",
+            fontFamily: "Inter, sans-serif"
+        });
+
+        toast.querySelector("i").style.color = isError ? "#ef4444" : "#f97316";
 
         document.body.appendChild(toast);
 
-        // Trigger show slide translation
         setTimeout(() => {
             toast.style.opacity = "1";
-            toast.style.transform = "translateY(0)";
-        }, 50);
+            toast.style.transform = "translateX(0)";
+        }, 40);
 
-        // Slide hide translation and clear DOM
         setTimeout(() => {
             toast.style.opacity = "0";
-            toast.style.transform = "translateY(-20px)";
+            toast.style.transform = "translateX(20px)";
             setTimeout(() => toast.remove(), 300);
-        }, 3000);
+        }, 3200);
     }
 
     // RUN ON LOAD

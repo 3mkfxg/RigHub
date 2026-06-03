@@ -3,104 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PRICEWEB - Jordan Monitor & Arm Comparator</title>
-    <!-- Google Fonts: Outfit for body, Orbitron for futuristic tech headings -->
+    <title>PRICEWEB — Jordan PC Components & Electronics Comparator</title>
+    <meta name="description" content="Compare PC components, monitors, peripherals and accessories from Jordan's top tech stores — iGeek.jo, City Center, Oriental Store, PC Circle, Taipei Computer, MCC Jordan and Game On.">
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- FontAwesome for futuristic shop UI icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700;800&family=Orbitron:wght@700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Custom CSS -->
+    <!-- App Stylesheet -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-    <!-- Glowing Cyber Background Decor -->
-    <div class="cyber-bg-glow glow-top-left"></div>
-    <div class="cyber-bg-glow glow-bottom-right"></div>
+    <!-- ====================== STICKY HEADER ====================== -->
+    <header class="app-header">
+        <div class="header-inner">
 
-    <div class="app-container">
-        
-        <!-- ================= HEADER SECTION ================= -->
-        <header class="app-header">
+            <!-- Logo -->
             <div class="header-logo">
                 <i class="fa-solid fa-microchip logo-icon"></i>
                 <div class="logo-text">
                     <h1>PRICE<span>WEB</span></h1>
-                    <p>Jordan Monitor & Arm Comparator <a href="https://www.instagram.com/3mk_f_x_g/" target="_blank" rel="noopener noreferrer" class="header-creator-link">by 3mkfxg</a></p>
+                    <p>Jordan PC Comparator &nbsp;·&nbsp; <a href="https://www.instagram.com/3mk_f_x_g/" target="_blank" rel="noopener noreferrer" class="header-creator-link">by 3mkfxg</a></p>
                 </div>
-                <button class="theme-toggle" id="theme-toggle-btn" title="Toggle Light/Dark Theme">
+            </div>
+
+            <!-- Global Search Bar -->
+            <div class="header-search">
+                <i class="fa-solid fa-magnifying-glass header-search-icon"></i>
+                <input
+                    type="text"
+                    id="header-search-bar"
+                    class="header-search-input"
+                    placeholder="Search monitors, GPUs, SSDs, chairs..."
+                    autocomplete="off"
+                >
+            </div>
+
+            <!-- Header Actions -->
+            <div class="header-actions">
+                <button class="theme-toggle" id="theme-toggle-btn" title="Toggle Dark / Light Mode">
                     <i class="fa-solid fa-moon" id="theme-icon"></i>
                 </button>
             </div>
-            <div class="header-stats">
-                <div class="stat-badge">
-                    <span class="stat-num" id="stat-total-products">0</span>
-                    <span class="stat-label">Total Items</span>
-                </div>
-                <div class="stat-badge store-igeek">
-                    <span class="stat-num" id="stat-igeek-count">0</span>
-                    <span class="stat-label">iGeek.jo</span>
-                </div>
-                <div class="stat-badge store-citycenter">
-                    <span class="stat-num" id="stat-city-count">0</span>
-                    <span class="stat-label">City Center</span>
-                </div>
-                <div class="stat-badge store-osjo">
-                    <span class="stat-num" id="stat-osjo-count">0</span>
-                    <span class="stat-label">Oriental Store</span>
-                </div>
-                <div class="stat-badge store-pccircle">
-                    <span class="stat-num" id="stat-pccircle-count">0</span>
-                    <span class="stat-label">PC Circle</span>
-                </div>
-                <div class="stat-badge store-taipei">
-                    <span class="stat-num" id="stat-taipei-count">0</span>
-                    <span class="stat-label">Taipei Computer</span>
-                </div>
-                <div class="stat-badge store-mcc">
-                    <span class="stat-num" id="stat-mcc-count">0</span>
-                    <span class="stat-label">MCC Jordan</span>
-                </div>
-                <div class="stat-badge store-gameon">
-                    <span class="stat-num" id="stat-gameon-count">0</span>
-                    <span class="stat-label">Game On</span>
+
+        </div>
+    </header>
+
+    <!-- ====================== FEATURE STRIP (Trust Bar) ====================== -->
+    <div class="feature-strip" id="feature-strip">
+        <div class="feature-strip-inner">
+            <div class="feature-item">
+                <div class="feature-icon"><i class="fa-solid fa-store"></i></div>
+                <div class="feature-text">
+                    <strong>8 Jordan Tech Stores</strong>
+                    <span>iGeek, City Center, OS, PC Circle &amp; more</span>
                 </div>
             </div>
-        </header>
+            <div class="feature-item">
+                <div class="feature-icon"><i class="fa-solid fa-rotate"></i></div>
+                <div class="feature-text">
+                    <strong>Regularly Updated</strong>
+                    <span>Fresh product data from live scrapers</span>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+                <div class="feature-text">
+                    <strong>Side-by-Side Compare</strong>
+                    <span>Compare up to 3 products at once</span>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon"><i class="fa-solid fa-coins"></i></div>
+                <div class="feature-text">
+                    <strong>100% Free Data</strong>
+                    <span>No account needed — all prices visible</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====================== STATS BAR (Store Counts) ====================== -->
+    <div class="header-stats-bar" id="stats-bar">
+        <div class="stats-bar-inner">
+            <span class="stats-bar-label">Products:</span>
+            <div class="stat-badge stat-badge-total">
+                <span class="stat-num" id="stat-total-products">0</span>
+                <span>Total</span>
+            </div>
+            <div class="stat-badge store-igeek">
+                <span class="stat-num" id="stat-igeek-count">0</span>
+                <span>iGeek.jo</span>
+            </div>
+            <div class="stat-badge store-citycenter">
+                <span class="stat-num" id="stat-city-count">0</span>
+                <span>City Center</span>
+            </div>
+            <div class="stat-badge store-osjo">
+                <span class="stat-num" id="stat-osjo-count">0</span>
+                <span>Oriental Store</span>
+            </div>
+            <div class="stat-badge store-pccircle">
+                <span class="stat-num" id="stat-pccircle-count">0</span>
+                <span>PC Circle</span>
+            </div>
+            <div class="stat-badge store-taipei">
+                <span class="stat-num" id="stat-taipei-count">0</span>
+                <span>Taipei</span>
+            </div>
+            <div class="stat-badge store-mcc">
+                <span class="stat-num" id="stat-mcc-count">0</span>
+                <span>MCC Jordan</span>
+            </div>
+            <div class="stat-badge store-gameon">
+                <span class="stat-num" id="stat-gameon-count">0</span>
+                <span>Game On</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====================== MAIN APP CONTAINER ====================== -->
+    <div class="app-container">
 
         <!-- ================= CATEGORY HOMEPAGE ================= -->
         <section class="category-homepage" id="category-homepage">
             <div class="cat-home-header">
-                <h2 class="cat-home-title"><i class="fa-solid fa-microchip"></i> PC Components & Streaming Gear</h2>
-                <p class="cat-home-subtitle">Browse by category — click any hardware component or peripheral to explore all available products from Jordan's top tech stores.</p>
+                <div>
+                    <h2 class="cat-home-title">
+                        <i class="fa-solid fa-microchip"></i>
+                        Shop by Category
+                    </h2>
+                    <p class="cat-home-subtitle">Browse Jordan's best PC components, peripherals &amp; gaming gear from 8 local tech stores — all in one place.</p>
+                </div>
             </div>
-            <div class="cat-home-grid" id="cat-home-grid">
-                <!-- Filled dynamically by JavaScript -->
-            </div>
+            <!-- Category square cards — filled dynamically by JS -->
+            <div class="cat-home-grid" id="cat-home-grid"></div>
         </section>
 
-        <!-- ================= MAIN LAYOUT ================= -->
+        <!-- ================= CATALOG MAIN LAYOUT ================= -->
         <main class="main-layout" id="main-layout" style="display:none;">
-            
-            <!-- 1. LEFT FILTER COLUMN -->
-            <aside class="filter-sidebar glass-panel">
+
+            <!-- LEFT: Filter Sidebar -->
+            <aside class="filter-sidebar">
                 <div class="filter-group-header">
-                    <h2><i class="fa-solid fa-sliders"></i> Search & Filters</h2>
-                    <button class="btn-clear-all" id="btn-reset-filters"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+                    <h2><i class="fa-solid fa-sliders"></i> Filters</h2>
+                    <button class="btn-clear-all" id="btn-reset-filters">
+                        <i class="fa-solid fa-rotate-left"></i> Reset
+                    </button>
                 </div>
 
                 <!-- Instant Search -->
                 <div class="filter-group">
-                    <label class="group-label">Instant Search</label>
+                    <label class="group-label">Search</label>
                     <div class="search-input-wrapper">
                         <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                        <input type="text" id="search-input" placeholder="Search Curved, 240Hz, IPS, Dual Arms..." autocomplete="off">
-                        <button class="clear-search-btn" id="btn-clear-search" style="display: none;"><i class="fa-solid fa-xmark"></i></button>
+                        <input
+                            type="text"
+                            id="search-input"
+                            placeholder="Curved, 240Hz, IPS, RTX 4080..."
+                            autocomplete="off"
+                        >
+                        <button class="clear-search-btn" id="btn-clear-search" style="display:none;">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
                     </div>
                 </div>
 
-                <!-- Website Selector -->
+                <!-- Store Selector -->
                 <div class="filter-group">
                     <label class="group-label">Jordan Tech Stores</label>
                     <div class="checkbox-list">
@@ -142,15 +213,15 @@
                     </div>
                 </div>
 
-                <!-- Component Type Filters -->
+                <!-- Category Filter -->
                 <div class="filter-group">
                     <label class="group-label">Category</label>
                     <div class="category-grid" id="category-filter-list">
-                        <!-- Filled dynamically by JavaScript -->
+                        <!-- Filled dynamically by JS -->
                     </div>
                 </div>
 
-                <!-- Price Range Filter -->
+                <!-- Price Range -->
                 <div class="filter-group">
                     <label class="group-label">Price Range (JOD)</label>
                     <div class="price-slider-container">
@@ -161,7 +232,7 @@
                             </div>
                             <div class="price-field">
                                 <span>Max</span>
-                                <input type="number" id="price-max" value="1000">
+                                <input type="number" id="price-max" value="2500">
                             </div>
                         </div>
                         <div class="range-slider">
@@ -172,7 +243,7 @@
                     </div>
                 </div>
 
-                <!-- Stock Status Toggle -->
+                <!-- Stock Toggle -->
                 <div class="filter-group">
                     <label class="group-label">Availability</label>
                     <label class="toggle-switch">
@@ -183,88 +254,90 @@
                 </div>
             </aside>
 
-            <!-- 2. RIGHT CATALOG GRID -->
+            <!-- RIGHT: Catalog Section -->
             <section class="catalog-section">
-                <!-- Back to Categories Button -->
+
+                <!-- Back Button & Breadcrumb -->
                 <div class="back-bar">
                     <button class="btn-back-categories" id="btn-back-categories">
-                        <i class="fa-solid fa-arrow-left"></i> Back to Categories
+                        <i class="fa-solid fa-arrow-left"></i> All Categories
                     </button>
                     <span class="browsing-label" id="browsing-label"></span>
                 </div>
-                <!-- Sorting & Metadata Toolbar -->
-                <div class="catalog-toolbar glass-panel">
+
+                <!-- Toolbar: Count + Sort -->
+                <div class="catalog-toolbar">
                     <div class="results-meta">
                         <span class="results-count" id="results-count-text">Found 0 products</span>
-                        <div class="active-chips" id="active-chips-container">
-                            <!-- Selected filter tags shown dynamically -->
-                        </div>
+                        <div class="active-chips" id="active-chips-container"></div>
                     </div>
                     <div class="sorting-controls">
                         <label for="sort-select">Sort By:</label>
                         <select id="sort-select" class="glass-select">
-                            <option value="price-asc">Price: Low to High</option>
-                            <option value="price-desc">Price: High to Low</option>
-                            <option value="name-asc">Name: A to Z</option>
+                            <option value="price-asc">Price: Low → High</option>
+                            <option value="price-desc">Price: High → Low</option>
+                            <option value="name-asc">Name: A → Z</option>
                             <option value="category">Category</option>
                         </select>
                     </div>
                 </div>
 
-                <!-- Dynamic Grid Loader -->
+                <!-- Product Grid -->
                 <div class="products-grid" id="products-catalog-grid">
-                    <!-- Cards are rendered dynamically by JavaScript -->
                     <div class="catalog-loader">
-                        <i class="fa-solid fa-spinner fa-spin"></i>
-                        <p>Initializing neon storefront dataset...</p>
+                        <i class="fa-solid fa-spinner"></i>
+                        <p>Loading product catalog...</p>
                     </div>
                 </div>
 
-                <!-- Pagination Panel -->
-                <div class="pagination-container" id="pagination-panel">
-                    <!-- Dynamic page buttons loaded here -->
-                </div>
+                <!-- Pagination -->
+                <div class="pagination-container" id="pagination-panel"></div>
+
             </section>
         </main>
-        
-        <!-- ================= FLOATING COMPARE TRAY ================= -->
-        <div class="compare-tray" id="compare-tray">
-            <div class="compare-tray-header" id="compare-tray-toggle">
-                <div class="compare-title">
-                    <i class="fa-solid fa-scale-balanced tray-icon"></i>
-                    <h3>Compare Components (<span id="compare-count">0</span>/3)</h3>
-                </div>
-                <div class="compare-tray-controls">
-                    <span class="compare-hint">Select up to 3 parts to compare side-by-side</span>
-                    <button class="btn-toggle-tray"><i class="fa-solid fa-chevron-up" id="tray-chevron"></i></button>
-                </div>
-            </div>
-            <div class="compare-tray-body">
-                <div class="compare-slots-container" id="compare-slots">
-                    <!-- Compare slots rendered here -->
-                </div>
-                <div class="compare-action-block">
-                    <button class="btn-compare-action btn-glowing-neon" id="btn-trigger-compare" disabled>
-                        <i class="fa-solid fa-circle-check"></i> Compare Now
-                    </button>
-                    <button class="btn-clear-compare" id="btn-clear-compare-all">Clear All</button>
-                </div>
-            </div>
-        </div>
 
-        <!-- ================= FOOTER SECTION ================= -->
-        <footer class="app-footer glass-panel">
-            <p>&copy; 2026 <span class="footer-highlight">PRICEWEB</span>. Jordan PC Components Comparator. Made with <i class="fa-solid fa-heart" style="color: var(--neon-coral);"></i> by <a href="https://www.instagram.com/3mk_f_x_g/" target="_blank" rel="noopener noreferrer" class="creator-highlight">3mkfxg</a>.</p>
+        <!-- ================= FOOTER ================= -->
+        <footer class="app-footer">
+            <p>&copy; 2026 <span class="footer-highlight">PRICEWEB</span>. Jordan PC Components Comparator. Made with <i class="fa-solid fa-heart"></i> by <a href="https://www.instagram.com/3mk_f_x_g/" target="_blank" rel="noopener noreferrer" class="creator-highlight">3mkfxg</a>.</p>
         </footer>
 
     </div>
 
-    <!-- ================= SIDE-BY-SIDE COMPARATIVE OVERLAY MODAL ================= -->
+    <!-- ====================== FLOATING COMPARE TRAY ====================== -->
+    <div class="compare-tray" id="compare-tray">
+        <div class="compare-tray-header" id="compare-tray-toggle">
+            <div class="compare-title">
+                <i class="fa-solid fa-scale-balanced tray-icon"></i>
+                <h3>Compare Products (<span id="compare-count">0</span>/3)</h3>
+            </div>
+            <div class="compare-tray-controls">
+                <span class="compare-hint">Select up to 3 items to compare side-by-side</span>
+                <button class="btn-toggle-tray">
+                    <i class="fa-solid fa-chevron-up" id="tray-chevron"></i>
+                </button>
+            </div>
+        </div>
+        <div class="compare-tray-body">
+            <div class="compare-slots-container" id="compare-slots">
+                <!-- Slots rendered dynamically by JS -->
+            </div>
+            <div class="compare-action-block">
+                <button class="btn-compare-action" id="btn-trigger-compare" disabled>
+                    <i class="fa-solid fa-circle-check"></i> Compare Now
+                </button>
+                <button class="btn-clear-compare" id="btn-clear-compare-all">Clear All</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====================== SIDE-BY-SIDE COMPARE MODAL ====================== -->
     <div class="modal-overlay" id="compare-modal">
-        <div class="modal-content glass-panel">
+        <div class="modal-content">
             <div class="modal-header">
-                <h2><i class="fa-solid fa-scale-balanced"></i> Side-by-Side Product Comparison</h2>
-                <button class="btn-close-modal" id="btn-close-compare-modal"><i class="fa-solid fa-xmark"></i></button>
+                <h2><i class="fa-solid fa-scale-balanced"></i> Side-by-Side Comparison</h2>
+                <button class="btn-close-modal" id="btn-close-compare-modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
             <div class="modal-body">
                 <div class="comparison-table-wrapper">
@@ -280,7 +353,7 @@
                                 <td class="attr-label">Product Image</td>
                             </tr>
                             <tr id="compare-row-store">
-                                <td class="attr-label">Store Origin</td>
+                                <td class="attr-label">Store</td>
                             </tr>
                             <tr id="compare-row-category">
                                 <td class="attr-label">Category</td>
@@ -292,25 +365,25 @@
                                 <td class="attr-label">Price (JOD)</td>
                             </tr>
                             <tr id="compare-row-size">
-                                <td class="attr-label">Screen Size (Inches)</td>
+                                <td class="attr-label">Screen Size</td>
                             </tr>
                             <tr id="compare-row-hz">
-                                <td class="attr-label">Refresh Rate (Hz)</td>
+                                <td class="attr-label">Refresh Rate</td>
                             </tr>
                             <tr id="compare-row-ms">
-                                <td class="attr-label">Response Time (ms)</td>
+                                <td class="attr-label">Response Time</td>
                             </tr>
                             <tr id="compare-row-arms">
                                 <td class="attr-label">Arms Supported</td>
                             </tr>
                             <tr id="compare-row-weight">
-                                <td class="attr-label">Weight Capacity (kg)</td>
+                                <td class="attr-label">Weight Capacity</td>
                             </tr>
                             <tr id="compare-row-status">
-                                <td class="attr-label">Availability Status</td>
+                                <td class="attr-label">Availability</td>
                             </tr>
                             <tr id="compare-row-action">
-                                <td class="attr-label">Shop Link</td>
+                                <td class="attr-label">Store Link</td>
                             </tr>
                         </tbody>
                     </table>
@@ -319,9 +392,9 @@
         </div>
     </div>
 
-    <!-- SheetJS for parsing XLSX directly in browser -->
+    <!-- SheetJS for XLSX parsing -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <!-- Core App JS -->
+    <!-- App JS -->
     <script src="app.js"></script>
 </body>
 </html>
