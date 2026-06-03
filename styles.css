@@ -602,10 +602,13 @@ body.dark-theme .stat-badge-total {
     border-radius: var(--radius-xl);
     overflow: hidden;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    border: 2px solid var(--cat-color, var(--orange));
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    border: 2.5px solid var(--cat-color, var(--orange));
+    
+    /* Mix category color heavily (45%) with page card background for full colored style */
     background: var(--bg-card);
-    background: color-mix(in srgb, var(--cat-color, var(--orange)) 8%, var(--bg-card));
+    background: color-mix(in srgb, var(--cat-color, var(--orange)) 45%, var(--bg-card));
+    
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -621,9 +624,9 @@ body.dark-theme .stat-badge-total {
 /* Hover state: Card scaling, glow, background tint boost */
 .cat-home-card:hover {
     transform: translateY(-8px) scale(1.03);
-    box-shadow: 0 16px 36px -8px color-mix(in srgb, var(--cat-color, var(--orange)) 20%, rgba(0, 0, 0, 0.15));
-    background: var(--bg-card);
-    background: color-mix(in srgb, var(--cat-color, var(--orange)) 18%, var(--bg-card));
+    box-shadow: 0 16px 36px -8px color-mix(in srgb, var(--cat-color, var(--orange)) 45%, rgba(0, 0, 0, 0.3));
+    background: color-mix(in srgb, var(--cat-color, var(--orange)) 60%, var(--bg-card));
+    border-color: rgba(255, 255, 255, 0.65);
 }
 
 /* ---- Card Icon Glyph ---- */
@@ -673,14 +676,19 @@ body.dark-theme .cat-home-card h3 {
     gap: 5px;
     font-size: 0.72rem;
     font-weight: 700;
-    color: var(--cat-color, var(--orange));
-    background: var(--bg-badge);
-    background: color-mix(in srgb, var(--cat-color, var(--orange)) 10%, var(--bg-badge));
-    border: 1px solid color-mix(in srgb, var(--cat-color, var(--orange)) 20%, transparent);
+    color: #ffffff;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 50px;
     padding: 4px 12px;
     white-space: nowrap;
     transition: background 0.3s, color 0.3s, border-color 0.3s;
+}
+
+body.light-theme .cat-home-card-count-badge {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .cat-home-card:hover .cat-home-card-count-badge {
@@ -715,16 +723,17 @@ body.dark-theme .cat-home-card h3 {
     font-size: 0.65rem;
     font-weight: 600;
     padding: 3px 9px;
-    background: var(--bg-badge);
-    background: color-mix(in srgb, var(--cat-color, var(--orange)) 8%, var(--bg-badge));
-    border: 1px solid color-mix(in srgb, var(--cat-color, var(--orange)) 15%, transparent);
+    background: rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 40px;
-    color: var(--text-secondary);
+    color: rgba(255, 255, 255, 0.85);
     transition: all 0.2s ease;
 }
 
-body.dark-theme .cat-home-tag-pill {
-    color: var(--text-muted);
+body.light-theme .cat-home-tag-pill {
+    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .cat-home-tag-pill:hover {
@@ -737,7 +746,8 @@ body.dark-theme .cat-home-tag-pill {
 .cat-home-footer {
     margin-top: auto;
 }
-/* =====================================================================
+
+/* ===================================================================== */
    MAIN LAYOUT (Catalog View)
    ===================================================================== */
 .main-layout {
@@ -2312,10 +2322,7 @@ body.dark-theme .catalog-toolbar {
     border-color: var(--border-light);
 }
 
-body.dark-theme .cat-home-card {
-    background: var(--bg-card);
-    border-color: var(--border-light);
-}
+
 
 body.dark-theme .product-card {
     background: var(--bg-card);
