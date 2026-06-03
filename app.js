@@ -24,24 +24,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Category details with specific icons mapping
     const CATEGORY_MAP = {
-        "Monitor":        { label: "Monitors",          icon: "fa-desktop",     emoji: "🖥️",  color: "#00b4d8", desc: "Full HD, QHD & 4K displays",           tags: ["Full HD", "QHD", "4K", "Curved", "IPS", "VA", "144Hz", "240Hz"] },
-        "Monitor Arm":    { label: "Monitor Arms",      icon: "fa-dolly",       emoji: "🦾",  color: "#a78bfa", desc: "Single, dual & triple mounts",         tags: ["Single Arm", "Dual Arm", "Triple Arm", "Gas Spring", "VESA 75/100"] },
-        "GPU":            { label: "Graphics Cards",    icon: "fa-server",      emoji: "🎮",  color: "#f97316", desc: "NVIDIA & AMD gaming GPUs",            tags: ["NVIDIA RTX", "AMD RX", "4GB VRAM", "8GB VRAM", "16GB VRAM", "DLSS"] },
-        "Processor":      { label: "Processors (CPU)",  icon: "fa-microchip",   emoji: "🔲",  color: "#3b82f6", desc: "Intel Core & AMD Ryzen",              tags: ["Intel Core i5", "Intel Core i7", "Intel Core i9", "AMD Ryzen 5", "AMD Ryzen 7"] },
-        "Motherboard":    { label: "Motherboards",      icon: "fa-chess-board", emoji: "🗜️",  color: "#34d399", desc: "ATX, mATX & ITX boards",              tags: ["ATX", "mATX", "Mini-ITX", "LGA1700", "AM5", "DDR4", "DDR5"] },
-        "RAM":            { label: "Memory (RAM)",      icon: "fa-memory",      emoji: "🧩",  color: "#ec4899", desc: "DDR4 & DDR5 memory kits",             tags: ["DDR4", "DDR5", "8GB", "16GB", "32GB", "64GB", "RGB", "3200MHz", "6000MHz"] },
-        "SSD":            { label: "SSDs (M.2/SATA)",   icon: "fa-database",    emoji: "💾",  color: "#f59e0b", desc: "NVMe M.2 & SATA drives",             tags: ["NVMe M.2", "SATA SSD", "250GB", "500GB", "1TB", "2TB", "PCIe Gen 4"] },
-        "Hard Disk":      { label: "Hard Disks (HDD)",  icon: "fa-hdd",         emoji: "💿",  color: "#94a3b8", desc: "High-capacity storage drives",       tags: ["1TB", "2TB", "4TB", "6TB", "8TB", "7200 RPM", "NAS Grade"] },
-        "Case":           { label: "PC Cases",          icon: "fa-box",         emoji: "🖥",  color: "#d946ef", desc: "ATX towers & compact cases",         tags: ["Full Tower", "Mid Tower", "Mini-ITX", "RGB", "Tempered Glass", "White"] },
-        "PSU":            { label: "Power Supplies",    icon: "fa-plug",        emoji: "⚡",  color: "#eab308", desc: "Modular & semi-modular PSUs",        tags: ["550W", "650W", "750W", "850W", "1000W", "80+ Gold", "80+ Platinum", "Fully Modular"] },
-        "Fan":            { label: "Fans & Coolers",    icon: "fa-fan",         emoji: "🌀",  color: "#38bdf8", desc: "Air coolers & AIO liquid cooling",  tags: ["Air Cooler", "120mm AIO", "240mm AIO", "360mm AIO", "ARGB", "Low Profile"] },
-        "Peripherals":    { label: "Peripherals",       icon: "fa-keyboard",    emoji: "⌨️",  color: "#06b6d4", desc: "Mice, keyboards & mouse pads",      tags: ["Gaming Mouse", "Mechanical KB", "Mouse Pad", "Wireless", "Wired", "TKL", "60%"] },
-        "Controllers":    { label: "Controllers",       icon: "fa-gamepad",     emoji: "🎮",  color: "#f43f5e", desc: "Console & PC game controllers",    tags: ["Xbox", "PlayStation", "PC USB", "Wireless", "Wired", "Fight Stick"] },
-        "Audio Gear":     { label: "Audio Gear",        icon: "fa-headphones",  emoji: "🎧",  color: "#8b5cf6", desc: "Headsets, microphones & speakers",  tags: ["Gaming Headset", "Studio Mic", "USB Mic", "XLR", "7.1 Surround", "Active Noise Cancel"] },
-        "Stream Gear":    { label: "Stream Gear",       icon: "fa-sliders",     emoji: "🎙️",  color: "#f97316", desc: "Stream decks, mixers & mic stands", tags: ["Stream Deck", "Audio Mixer", "Mic Arm", "Shock Mount", "Elgato", "Rode"] },
-        "Lighting & RGB": { label: "Lighting & RGB",   icon: "fa-lightbulb",   emoji: "💡",  color: "#ec4899", desc: "RGB lights & LED strip lights",     tags: ["LED Strip", "RGB Hub", "Ambient Light", "Corner Lamp", "Smart LED", "Govee"] },
-        "Desks & Chairs": { label: "Desks & Chairs",   icon: "fa-chair",       emoji: "💺",  color: "#10b981", desc: "Gaming chairs & gaming tables",    tags: ["Gaming Chair", "Ergonomic Chair", "Standing Desk", "L-Shape Desk", "Desk Mat"] },
-        "Webcams":        { label: "Webcams",           icon: "fa-video",       emoji: "📷",  color: "#0ea5e9", desc: "High-resolution webcams",          tags: ["1080p", "4K", "60fps", "Auto Focus", "Privacy Cover", "Ring Light", "Streaming"] }
+        "Monitor": { label: "Monitors", icon: "fa-desktop", emoji: "🖥️", color: "#00b4d8", desc: "Full HD, QHD & 4K displays", tags: ["Full HD", "QHD", "4K", "Curved", "IPS", "VA", "144Hz", "240Hz"] },
+        "Monitor Arm": { label: "Monitor Arms", icon: "fa-dolly", emoji: "🦾", color: "#a78bfa", desc: "Single, dual & triple mounts", tags: ["Single Arm", "Dual Arm", "Triple Arm", "Gas Spring", "VESA 75/100"] },
+        "GPU": { label: "Graphics Cards", icon: "fa-server", emoji: "🎮", color: "#f97316", desc: "NVIDIA & AMD gaming GPUs", tags: ["NVIDIA RTX", "AMD RX", "4GB VRAM", "8GB VRAM", "16GB VRAM", "DLSS"] },
+        "Processor": { label: "Processors (CPU)", icon: "fa-microchip", emoji: "🔲", color: "#3b82f6", desc: "Intel Core & AMD Ryzen", tags: ["Intel Core i5", "Intel Core i7", "Intel Core i9", "AMD Ryzen 5", "AMD Ryzen 7"] },
+        "Motherboard": { label: "Motherboards", icon: "fa-chess-board", emoji: "🗜️", color: "#34d399", desc: "ATX, mATX & ITX boards", tags: ["ATX", "mATX", "Mini-ITX", "LGA1700", "AM5", "DDR4", "DDR5"] },
+        "RAM": { label: "Memory (RAM)", icon: "fa-memory", emoji: "🧩", color: "#ec4899", desc: "DDR4 & DDR5 memory kits", tags: ["DDR4", "DDR5", "8GB", "16GB", "32GB", "64GB", "RGB", "3200MHz", "6000MHz"] },
+        "SSD": { label: "SSDs (M.2/SATA)", icon: "fa-database", emoji: "💾", color: "#f59e0b", desc: "NVMe M.2 & SATA drives", tags: ["NVMe M.2", "SATA SSD", "250GB", "500GB", "1TB", "2TB", "PCIe Gen 4"] },
+        "Hard Disk": { label: "Hard Disks (HDD)", icon: "fa-hdd", emoji: "💿", color: "#94a3b8", desc: "High-capacity storage drives", tags: ["1TB", "2TB", "4TB", "6TB", "8TB", "7200 RPM", "NAS Grade"] },
+        "Case": { label: "PC Cases", icon: "fa-box", emoji: "🖥", color: "#d946ef", desc: "ATX towers & compact cases", tags: ["Full Tower", "Mid Tower", "Mini-ITX", "RGB", "Tempered Glass", "White"] },
+        "PSU": { label: "Power Supplies", icon: "fa-plug", emoji: "⚡", color: "#eab308", desc: "Modular & semi-modular PSUs", tags: ["550W", "650W", "750W", "850W", "1000W", "80+ Gold", "80+ Platinum", "Fully Modular"] },
+        "Fan": { label: "Fans & Coolers", icon: "fa-fan", emoji: "🌀", color: "#38bdf8", desc: "Air coolers & AIO liquid cooling", tags: ["Air Cooler", "120mm AIO", "240mm AIO", "360mm AIO", "ARGB", "Low Profile"] },
+        "Peripherals": { label: "Peripherals", icon: "fa-keyboard", emoji: "⌨️", color: "#06b6d4", desc: "Mice, keyboards & mouse pads", tags: ["Gaming Mouse", "Mechanical KB", "Mouse Pad", "Wireless", "Wired", "TKL", "60%"] },
+        "Controllers": { label: "Controllers", icon: "fa-gamepad", emoji: "🎮", color: "#f43f5e", desc: "Console & PC game controllers", tags: ["Xbox", "PlayStation", "PC USB", "Wireless", "Wired", "Fight Stick"] },
+        "Audio Gear": { label: "Audio Gear", icon: "fa-headphones", emoji: "🎧", color: "#8b5cf6", desc: "Headsets, microphones & speakers", tags: ["Gaming Headset", "Studio Mic", "USB Mic", "XLR", "7.1 Surround", "Active Noise Cancel"] },
+        "Stream Gear": { label: "Stream Gear", icon: "fa-sliders", emoji: "🎙️", color: "#f97316", desc: "Stream decks, mixers & mic stands", tags: ["Stream Deck", "Audio Mixer", "Mic Arm", "Shock Mount", "Elgato", "Rode"] },
+        "Lighting & RGB": { label: "Lighting & RGB", icon: "fa-lightbulb", emoji: "💡", color: "#ec4899", desc: "RGB lights & LED strip lights", tags: ["LED Strip", "RGB Hub", "Ambient Light", "Corner Lamp", "Smart LED", "Govee"] },
+        "Desks & Chairs": { label: "Desks & Chairs", icon: "fa-chair", emoji: "💺", color: "#10b981", desc: "Gaming chairs & gaming tables", tags: ["Gaming Chair", "Ergonomic Chair", "Standing Desk", "L-Shape Desk", "Desk Mat"] },
+        "Webcams": { label: "Webcams", icon: "fa-video", emoji: "📷", color: "#0ea5e9", desc: "High-resolution webcams", tags: ["1080p", "4K", "60fps", "Auto Focus", "Privacy Cover", "Ring Light", "Streaming"] }
     };
 
     // DOM ELEMENTS
@@ -91,8 +91,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnThemeToggle = document.getElementById("theme-toggle-btn");
     const themeIcon = document.getElementById("theme-icon");
 
-    // Initialize Theme state (Default to Dark — dark-theme class enables dark mode)
-    const storedTheme = localStorage.getItem("theme") || "dark";
+    // Initialize Theme state (Default to Light — dark-theme class enables dark mode)
+    const storedTheme = localStorage.getItem("theme") || "light";
     if (storedTheme === "dark") {
         document.body.classList.add("dark-theme");
         if (themeIcon) themeIcon.className = "fa-solid fa-sun";
@@ -249,7 +249,7 @@ document.addEventListener("DOMContentLoaded", () => {
         statIgeek.textContent = countIgeek.toLocaleString();
         statCity.textContent = countCity.toLocaleString();
         statOsjo.textContent = countOsjo.toLocaleString();
-        
+
         const badgePcCircle = document.getElementById("stat-pccircle-count");
         const badgeTaipei = document.getElementById("stat-taipei-count");
         const badgeMcc = document.getElementById("stat-mcc-count");
@@ -535,7 +535,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const isOutOfStock = product.Status === "Out of Stock";
             const isComingSoon = product.Status === "Coming Soon";
-            
+
             let stockIndicatorClass = "in-stock-indicator";
             let stockTextClass = "stock-text-in";
             if (isOutOfStock) {
@@ -1118,7 +1118,7 @@ document.addEventListener("DOMContentLoaded", () => {
             top: "86px",
             right: "24px",
             background: isDark ? "#1e2235" : "#ffffff",
-            border: `1.5px solid ${isError ? "#ef4444" : "#f97316"  }`,
+            border: `1.5px solid ${isError ? "#ef4444" : "#f97316"}`,
             color: isDark ? "#f1f5f9" : "#1a1a2e",
             padding: "13px 18px",
             borderRadius: "10px",
