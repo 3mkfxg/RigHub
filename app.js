@@ -34,10 +34,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 { key: "ms_1",    label: "1ms",    icon: "fa-bolt",       match: p => p.response_time && parseFloat(p.response_time) <= 1 },
             ]},
             { group: "Screen Size", filters: [
-                { key: "inch_25",  label: "25.4\"",  icon: "fa-expand",    match: p => p.screen_size && parseFloat(p.screen_size) >= 24 && parseFloat(p.screen_size) <= 26 },
-                { key: "inch_27",  label: "27\"",    icon: "fa-expand",    match: p => p.screen_size && parseFloat(p.screen_size) >= 26.5 && parseFloat(p.screen_size) <= 28 },
-                { key: "inch_32",  label: "32\"",    icon: "fa-expand",    match: p => p.screen_size && parseFloat(p.screen_size) >= 31 && parseFloat(p.screen_size) <= 33 },
-                { key: "inch_34",  label: "34\"",    icon: "fa-expand",    match: p => p.screen_size && parseFloat(p.screen_size) >= 33.5 && parseFloat(p.screen_size) <= 35 },
+                { key: "inch_21",  label: "21\"",   icon: "fa-expand",   match: p => p.screen_size && parseFloat(p.screen_size) >= 20   && parseFloat(p.screen_size) < 22   },
+                { key: "inch_24",  label: "24\"",   icon: "fa-expand",   match: p => p.screen_size && parseFloat(p.screen_size) >= 23   && parseFloat(p.screen_size) < 25   },
+                { key: "inch_25",  label: "25\"",   icon: "fa-expand",   match: p => p.screen_size && parseFloat(p.screen_size) >= 25   && parseFloat(p.screen_size) < 26   },
+                { key: "inch_27",  label: "27\"",   icon: "fa-expand",   match: p => p.screen_size && parseFloat(p.screen_size) >= 26.5 && parseFloat(p.screen_size) < 28   },
+                { key: "inch_28",  label: "28\"",   icon: "fa-expand",   match: p => p.screen_size && parseFloat(p.screen_size) >= 28   && parseFloat(p.screen_size) < 30   },
+                { key: "inch_32",  label: "32\"",   icon: "fa-expand",   match: p => p.screen_size && parseFloat(p.screen_size) >= 31   && parseFloat(p.screen_size) < 33.5 },
+                { key: "inch_34",  label: "34\"",   icon: "fa-expand",   match: p => p.screen_size && parseFloat(p.screen_size) >= 33.5 && parseFloat(p.screen_size) < 36   },
+                { key: "inch_38",  label: "38\"",   icon: "fa-expand",   match: p => p.screen_size && parseFloat(p.screen_size) >= 36   && parseFloat(p.screen_size) < 42   },
+                { key: "inch_49",  label: "49\"",   icon: "fa-expand",   match: p => p.screen_size && parseFloat(p.screen_size) >= 45   && parseFloat(p.screen_size) <= 55  },
             ]},
             { group: "Refresh Rate", filters: [
                 { key: "hz_144",  label: "144Hz",  icon: "fa-gauge-high", match: p => p.refresh_rate && parseInt(p.refresh_rate) >= 144 },
@@ -575,8 +580,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ================= 2. FILTERING AND SORTING ACTIONS =================
     function applyFiltersAndSorting() {
-        const activeMatchers = getActiveSpecFilterMatchers();
-
         // 1. Apply active filter rules
         filteredProducts = allProducts.filter(p => {
             // Check Store origin
@@ -591,25 +594,18 @@ document.addEventListener("DOMContentLoaded", () => {
             // Check Price boundaries
             if (p.price_val < currentFilterMin || p.price_val > currentFilterMax) return false;
 
-            // Check Spec Filters (OR within same group, AND across groups)
-            if (activeMatchers.length > 0) {
-                // Group matchers by their group name to apply OR within group, AND across
+            // Check Spec Filters — strict AND: every selected pill must match the product
+            if (activeSpecFilters.size > 0) {
                 const specs = SPEC_FILTERS[selectedCategory] || [];
-                const groupedActive = {};
+                // Collect all active filter objects
+                const activeDefs = [];
                 specs.forEach(group => {
                     group.filters.forEach(f => {
-                        if (activeSpecFilters.has(f.key)) {
-                            if (!groupedActive[group.group]) groupedActive[group.group] = [];
-                            groupedActive[group.group].push(f);
-                        }
+                        if (activeSpecFilters.has(f.key)) activeDefs.push(f);
                     });
                 });
-                // Each group must match at least one of its selected filters (OR)
-                // All groups must match (AND)
-                const allGroupsMatch = Object.values(groupedActive).every(groupFilters =>
-                    groupFilters.some(f => f.match(p))
-                );
-                if (!allGroupsMatch) return false;
+                // Every selected pill must match (pure AND)
+                if (!activeDefs.every(f => f.match(p))) return false;
             }
 
             // Check Search query
