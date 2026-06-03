@@ -327,9 +327,7 @@ document.addEventListener("DOMContentLoaded", () => {
             card.innerHTML = `
                 <!-- FRONT: always visible -->
                 <div class="cat-home-card-front">
-                    <div class="cat-home-card-icon">
-                        <i class="fa-solid ${cat.icon}"></i>
-                    </div>
+                    <i class="fa-solid ${cat.icon} cat-home-card-icon"></i>
                     <h3>${cat.label}</h3>
                     <span class="cat-home-card-count-badge">
                         <i class="fa-solid fa-tag"></i> ${count.toLocaleString()} items
@@ -339,9 +337,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <!-- OVERLAY: slides up on hover -->
                 <div class="cat-home-card-overlay">
                     <div class="cat-overlay-header">
-                        <div class="cat-overlay-icon">
-                            <i class="fa-solid ${cat.icon}"></i>
-                        </div>
+                        <i class="fa-solid ${cat.icon} cat-overlay-icon"></i>
                         <span class="cat-overlay-title">${cat.label}</span>
                     </div>
                     <div class="cat-overlay-tags">${tagsHTML}</div>
