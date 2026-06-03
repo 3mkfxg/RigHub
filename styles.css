@@ -521,17 +521,20 @@ body.dark-theme .stat-badge-total { background: rgba(249,115,22,0.08); }
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 20px;
 }
-
 /* ---- Individual Category Card ---- */
 .cat-home-card {
     position: relative;
-    height: 230px;
+    height: 235px;
     border-radius: var(--radius-xl);
     overflow: hidden;
     cursor: pointer;
-    box-shadow: var(--shadow-sm);
-    border: 2px solid var(--cat-color, var(--orange));
-    background: var(--bg-card);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    background: linear-gradient(
+        135deg,
+        var(--cat-color, var(--orange)) 0%,
+        color-mix(in srgb, var(--cat-color, var(--orange)) 78%, #000000) 100%
+    );
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -540,30 +543,31 @@ body.dark-theme .stat-badge-total { background: rgba(249,115,22,0.08); }
     text-align: center;
     transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1),
                 box-shadow 0.35s cubic-bezier(0.25, 0.8, 0.25, 1),
-                background 0.35s cubic-bezier(0.25, 0.8, 0.25, 1),
                 border-color 0.35s ease;
 }
 
-/* Hover state: Card scaling, glow, background tint */
+/* Hover state: Card scaling, glow, background brightness */
 .cat-home-card:hover {
-    transform: translateY(-6px) scale(1.02);
-    box-shadow: 0 16px 36px -8px color-mix(in srgb, var(--cat-color, var(--orange)) 30%, transparent);
-    background: color-mix(in srgb, var(--cat-color, var(--orange)) 6%, var(--bg-card));
+    transform: translateY(-8px) scale(1.03);
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 15px 35px -5px color-mix(in srgb, var(--cat-color, var(--orange)) 65%, transparent),
+                0 0 15px color-mix(in srgb, var(--cat-color, var(--orange)) 40%, transparent);
 }
 
 /* ---- Card Icon Glyph ---- */
 .cat-home-icon-glyph {
-    font-size: 3.2rem;
-    color: var(--cat-color, var(--orange));
+    font-size: 3.4rem;
+    color: #ffffff;
     margin-bottom: 12px;
     transition: transform 0.4s cubic-bezier(0.25, 1.5, 0.5, 1),
                 filter 0.35s ease;
     display: inline-block;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.15));
 }
 
 /* Micro-animation on hover for the icon */
 .cat-home-card:hover .cat-home-icon-glyph {
-    filter: drop-shadow(0 0 12px color-mix(in srgb, var(--cat-color, var(--orange)) 70%, transparent));
+    filter: drop-shadow(0 0 14px rgba(255, 255, 255, 0.85));
     animation: cat-icon-pulse-float 1.8s ease-in-out infinite alternate;
 }
 
@@ -579,16 +583,16 @@ body.dark-theme .stat-badge-total { background: rgba(249,115,22,0.08); }
 /* ---- Card Title ---- */
 .cat-home-card h3 {
     font-family: 'Poppins', sans-serif;
-    font-size: 1.05rem;
+    font-size: 1.1rem;
     font-weight: 700;
-    color: var(--text-primary);
+    color: #ffffff;
     margin: 4px 0 8px;
     line-height: 1.2;
-    transition: color 0.3s ease;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.15);
 }
 
 body.dark-theme .cat-home-card h3 {
-    color: var(--text-white);
+    color: #ffffff;
 }
 
 /* ---- Count Badge ---- */
@@ -598,18 +602,19 @@ body.dark-theme .cat-home-card h3 {
     gap: 5px;
     font-size: 0.72rem;
     font-weight: 700;
-    color: var(--cat-color, var(--orange));
-    background: color-mix(in srgb, var(--cat-color, var(--orange)) 10%, var(--bg-badge));
-    border: 1px solid color-mix(in srgb, var(--cat-color, var(--orange)) 20%, transparent);
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.28);
     border-radius: 50px;
     padding: 4px 12px;
     white-space: nowrap;
-    transition: background 0.3s, color 0.3s;
+    transition: background 0.3s, color 0.3s, border-color 0.3s;
 }
 
 .cat-home-card:hover .cat-home-card-count-badge {
-    background: var(--cat-color, var(--orange));
-    color: var(--text-white);
+    background: #ffffff;
+    color: var(--cat-color, var(--orange));
+    border-color: #ffffff;
 }
 
 /* ---- Tags Reveal Section ---- */
@@ -638,28 +643,27 @@ body.dark-theme .cat-home-card h3 {
     font-size: 0.65rem;
     font-weight: 600;
     padding: 3px 9px;
-    background: color-mix(in srgb, var(--cat-color, var(--orange)) 8%, var(--bg-badge));
-    border: 1px solid color-mix(in srgb, var(--cat-color, var(--orange)) 15%, transparent);
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 40px;
-    color: var(--text-secondary);
+    color: rgba(255, 255, 255, 0.9);
     transition: all 0.2s ease;
 }
 
 body.dark-theme .cat-home-tag-pill {
-    color: var(--text-muted);
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .cat-home-tag-pill:hover {
-    background: var(--cat-color, var(--orange));
-    color: var(--text-white) !important;
-    border-color: var(--cat-color, var(--orange));
+    background: #ffffff;
+    color: var(--cat-color, var(--orange)) !important;
+    border-color: #ffffff;
     transform: scale(1.05);
 }
 
 .cat-home-footer {
     margin-top: auto;
 }
-
 /* =====================================================================
    MAIN LAYOUT (Catalog View)
    ===================================================================== */
