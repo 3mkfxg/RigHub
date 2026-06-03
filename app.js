@@ -91,8 +91,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnThemeToggle = document.getElementById("theme-toggle-btn");
     const themeIcon = document.getElementById("theme-icon");
 
-    // Initialize Theme state (Default to Light — dark-theme class enables dark mode)
-    const storedTheme = localStorage.getItem("theme") || "light";
+    // Initialize Theme state (Default to Dark — dark-theme class enables dark mode)
+    const storedTheme = localStorage.getItem("theme") || "dark";
     if (storedTheme === "dark") {
         document.body.classList.add("dark-theme");
         if (themeIcon) themeIcon.className = "fa-solid fa-sun";
@@ -314,9 +314,9 @@ document.addEventListener("DOMContentLoaded", () => {
             const count = allProducts.filter(p => p.category_key === key).length;
             if (count === 0) return; // hide empty categories
 
-            // Build overlay tag pills HTML
+            // Build tag pills HTML
             const tagsHTML = (cat.tags || []).map(t =>
-                `<span class="cat-overlay-tag">${t}</span>`
+                `<span class="cat-home-tag-pill">${t}</span>`
             ).join("");
 
             const card = document.createElement("div");
@@ -325,31 +325,15 @@ document.addEventListener("DOMContentLoaded", () => {
             card.style.setProperty("--cat-color", cat.color);
 
             card.innerHTML = `
-                <!-- FRONT: always visible -->
-                <div class="cat-home-card-front">
-                    <i class="fa-solid ${cat.icon} cat-home-card-icon"></i>
-                    <h3>${cat.label}</h3>
+                <i class="fa-solid ${cat.icon} cat-home-icon-glyph"></i>
+                <h3>${cat.label}</h3>
+                <div class="cat-home-tags-reveal">
+                    ${tagsHTML}
+                </div>
+                <div class="cat-home-footer">
                     <span class="cat-home-card-count-badge">
                         <i class="fa-solid fa-tag"></i> ${count.toLocaleString()} items
                     </span>
-                </div>
-
-                <!-- OVERLAY: slides up on hover -->
-                <div class="cat-home-card-overlay">
-                    <div class="cat-overlay-header">
-                        <i class="fa-solid ${cat.icon} cat-overlay-icon"></i>
-                        <span class="cat-overlay-title">${cat.label}</span>
-                    </div>
-                    <div class="cat-overlay-tags">${tagsHTML}</div>
-                    <div class="cat-overlay-footer">
-                        <span class="cat-overlay-count">
-                            <i class="fa-solid fa-layer-group"></i>
-                            ${count.toLocaleString()} products
-                        </span>
-                        <span class="cat-overlay-cta">
-                            Browse <i class="fa-solid fa-arrow-right"></i>
-                        </span>
-                    </div>
                 </div>
             `;
 
