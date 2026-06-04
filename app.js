@@ -72,6 +72,23 @@ document.addEventListener("DOMContentLoaded", () => {
                 { key: "hz_480",  label: "480Hz",  icon: "fa-gauge-high",  match: p => p.refresh_rate && parseInt(p.refresh_rate) === 480 },
                 { key: "hz_500p", label: "500Hz+", icon: "fa-gauge-high",  match: p => p.refresh_rate && parseInt(p.refresh_rate) >= 500 },
             ]},
+            { group: "Panel Type", filters: [
+                { key: "panel_ips",   label: "IPS",   icon: "fa-layer-group", match: p => /\bips\b/i.test(p["Full Name"]) },
+                { key: "panel_va",    label: "VA",    icon: "fa-layer-group", match: p => /\bva\b/i.test(p["Full Name"]) },
+                { key: "panel_tn",    label: "TN",    icon: "fa-layer-group", match: p => /\btn\b/i.test(p["Full Name"]) },
+                { key: "panel_oled",  label: "OLED",  icon: "fa-layer-group", match: p => /\boled\b/i.test(p["Full Name"]) },
+                { key: "panel_qled",  label: "QLED",  icon: "fa-layer-group", match: p => /\bqled\b/i.test(p["Full Name"]) },
+                { key: "panel_qd",    label: "QD-OLED",icon: "fa-layer-group",match: p => /qd.?oled/i.test(p["Full Name"]) },
+                { key: "panel_nano",  label: "Nano IPS",icon: "fa-layer-group",match: p => /nano.?ips/i.test(p["Full Name"]) },
+                { key: "panel_fast",  label: "Fast IPS",icon: "fa-layer-group",match: p => /fast.?ips/i.test(p["Full Name"]) },
+            ]},
+            { group: "Curve / Shape", filters: [
+                { key: "shape_flat",   label: "Flat",   icon: "fa-minus",    match: p => /\bflat\b/i.test(p["Full Name"]) || !/curved|curve/i.test(p["Full Name"]) },
+                { key: "shape_curved", label: "Curved", icon: "fa-circle-half-stroke", match: p => /curved|curve/i.test(p["Full Name"]) },
+                { key: "shape_1000r",  label: "1000R",  icon: "fa-circle-half-stroke", match: p => /1000r/i.test(p["Full Name"]) },
+                { key: "shape_1500r",  label: "1500R",  icon: "fa-circle-half-stroke", match: p => /1500r/i.test(p["Full Name"]) },
+                { key: "shape_1800r",  label: "1800R",  icon: "fa-circle-half-stroke", match: p => /1800r/i.test(p["Full Name"]) },
+            ]},
         ],
         "Monitor Arm": [
             { group: "Weight Capacity", filters: [
@@ -449,7 +466,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // ---- Render spec filter pills for current category ----
+    // ---- Render spec filter pills for current category (collapsible accordion) ----
     function renderSpecFilterUI(categoryKey) {
         const specGroup = document.getElementById("spec-filter-group");
         const specContainer = document.getElementById("spec-filters-container");
@@ -464,21 +481,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
         specGroup.style.display = "flex";
         let html = "";
-        specs.forEach(group => {
-            html += `<div class="spec-filter-group-section">`;
-            html += `<span class="spec-filter-group-label">${group.group}</span>`;
+        specs.forEach((group, idx) => {
+            // Check if any filter in this group is active
+            const hasActive = group.filters.some(f => activeSpecFilters.has(f.key));
+            // Start collapsed unless a filter inside is already active
+            const isOpen = hasActive;
+            const groupId = `spec-grp-${idx}`;
+
+            html += `<div class="spec-accordion" data-group-idx="${idx}">`;
+            // Toggle button header
+            html += `<button class="spec-accordion-toggle ${hasActive ? 'has-active' : ''} ${isOpen ? 'open' : ''}" data-target="${groupId}">
+                <span class="spec-accordion-label">${group.group}</span>
+                ${hasActive ? `<span class="spec-active-badge">${group.filters.filter(f => activeSpecFilters.has(f.key)).length}</span>` : ''}
+                <i class="fa-solid fa-chevron-down spec-accordion-chevron"></i>
+            </button>`;
+            // Collapsible body
+            html += `<div class="spec-accordion-body ${isOpen ? 'open' : ''}" id="${groupId}">`;
             html += `<div class="spec-filter-pills">`;
             group.filters.forEach(f => {
                 const isActive = activeSpecFilters.has(f.key);
-                html += `
-                    <button class="spec-filter-pill ${isActive ? 'active' : ''}" data-spec-key="${f.key}">
-                        <i class="fa-solid ${f.icon}"></i>
-                        ${f.label}
+                html += `<button class="spec-filter-pill ${isActive ? 'active' : ''}" data-spec-key="${f.key}">
+                        <i class="fa-solid ${f.icon}"></i>${f.label}
                     </button>`;
             });
-            html += `</div></div>`;
+            html += `</div></div></div>`;
         });
         specContainer.innerHTML = html;
+
+        // Bind accordion toggles
+        specContainer.querySelectorAll(".spec-accordion-toggle").forEach(toggle => {
+            toggle.addEventListener("click", () => {
+                const targetId = toggle.getAttribute("data-target");
+                const body = document.getElementById(targetId);
+                const isOpen = body.classList.contains("open");
+                body.classList.toggle("open", !isOpen);
+                toggle.classList.toggle("open", !isOpen);
+            });
+        });
 
         // Bind click events to spec pills
         specContainer.querySelectorAll(".spec-filter-pill").forEach(pill => {
@@ -493,6 +532,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 currentPage = 1;
                 applyFiltersAndSorting();
+                // Re-render to update badges without closing open accordions
+                renderSpecFilterUI(selectedCategory);
             });
         });
     }

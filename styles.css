@@ -860,23 +860,107 @@ body.light-theme .cat-home-tag-pill {
 .spec-filters-container {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 4px;
 }
 
-.spec-filter-group-section {
+/* ---- Accordion wrapper ---- */
+.spec-accordion {
+    border: 1.5px solid var(--border-light);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    transition: border-color 0.2s;
+}
+
+.spec-accordion:has(.spec-accordion-toggle.has-active) {
+    border-color: var(--orange);
+}
+
+/* ---- Accordion toggle button ---- */
+.spec-accordion-toggle {
+    width: 100%;
     display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.spec-filter-group-label {
-    font-size: 0.68rem;
-    font-weight: 600;
-    color: var(--text-muted);
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    background: var(--bg-page);
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text-primary);
     text-transform: uppercase;
     letter-spacing: 0.7px;
+    transition: background 0.18s, color 0.18s;
+    text-align: left;
 }
 
+.spec-accordion-toggle:hover {
+    background: var(--orange-light);
+    color: var(--orange);
+}
+
+.spec-accordion-toggle.has-active {
+    background: var(--orange-light);
+    color: var(--orange);
+}
+
+body.dark-theme .spec-accordion-toggle.has-active {
+    background: rgba(0, 255, 204, 0.07);
+    color: var(--orange);
+}
+
+.spec-accordion-label {
+    flex: 1;
+}
+
+/* Active filter count badge on toggle */
+.spec-active-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    background: var(--orange);
+    color: #fff;
+    border-radius: 50px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+body.dark-theme .spec-active-badge {
+    color: var(--navy);
+}
+
+/* Chevron rotation */
+.spec-accordion-chevron {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+    flex-shrink: 0;
+}
+
+.spec-accordion-toggle.open .spec-accordion-chevron {
+    transform: rotate(180deg);
+}
+
+/* ---- Collapsible body ---- */
+.spec-accordion-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s cubic-bezier(0.25, 0.8, 0.25, 1),
+                padding 0.3s ease;
+    padding: 0 10px;
+}
+
+.spec-accordion-body.open {
+    max-height: 300px;
+    padding: 8px 10px 10px;
+}
+
+/* ---- Pills inside accordion ---- */
 .spec-filter-pills {
     display: flex;
     flex-wrap: wrap;
@@ -932,7 +1016,21 @@ body.light-theme .cat-home-tag-pill {
     transform: translateY(-1px);
 }
 
-/* Dark theme overrides for spec pills */
+/* Dark theme overrides */
+body.dark-theme .spec-accordion {
+    border-color: var(--border-light);
+}
+
+body.dark-theme .spec-accordion-toggle {
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-primary);
+}
+
+body.dark-theme .spec-accordion-toggle:hover {
+    background: rgba(0, 255, 204, 0.07);
+    color: var(--orange);
+}
+
 body.dark-theme .spec-filter-pill {
     background: rgba(255, 255, 255, 0.04);
     border-color: var(--border-medium);
