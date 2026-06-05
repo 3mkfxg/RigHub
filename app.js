@@ -101,15 +101,35 @@ document.addEventListener("DOMContentLoaded", () => {
             ]},
         ],
         "GPU": [
+            { group: "Brand / Chipset", filters: [
+                { key: "gpu_nv_rtx50", label: "NVIDIA RTX 50-Series", icon: "fa-server", match: p => /rtx\s*50\d\d|rtx\s*50-series/i.test(p["Full Name"]) },
+                { key: "gpu_nv_rtx40", label: "NVIDIA RTX 40-Series", icon: "fa-server", match: p => /rtx\s*40\d\d|rtx\s*40-series/i.test(p["Full Name"]) },
+                { key: "gpu_nv_rtx30", label: "NVIDIA RTX 30-Series", icon: "fa-server", match: p => /rtx\s*30\d\d|rtx\s*30-series/i.test(p["Full Name"]) },
+                { key: "gpu_amd_rx",   label: "AMD Radeon RX",        icon: "fa-server", match: p => /\brx\s*\d{4}\b/i.test(p["Full Name"]) },
+            ]},
             { group: "VRAM", filters: [
+                { key: "vram_6",   label: "6GB VRAM",  icon: "fa-server", match: p => /\b6\s*gb/i.test(p["Full Name"]) },
                 { key: "vram_8",   label: "8GB VRAM",  icon: "fa-server", match: p => /\b8\s*gb/i.test(p["Full Name"]) },
+                { key: "vram_12",  label: "12GB VRAM", icon: "fa-server", match: p => /\b12\s*gb/i.test(p["Full Name"]) },
                 { key: "vram_16",  label: "16GB VRAM", icon: "fa-server", match: p => /\b16\s*gb/i.test(p["Full Name"]) },
+                { key: "vram_24",  label: "24GB VRAM", icon: "fa-server", match: p => /\b24\s*gb/i.test(p["Full Name"]) },
             ]},
         ],
         "Processor": [
+            { group: "Series", filters: [
+                { key: "cpu_i3", label: "Core i3", icon: "fa-microchip", match: p => /\bi3\b/i.test(p["Full Name"]) },
+                { key: "cpu_i5", label: "Core i5", icon: "fa-microchip", match: p => /\bi5\b/i.test(p["Full Name"]) },
+                { key: "cpu_i7", label: "Core i7", icon: "fa-microchip", match: p => /\bi7\b/i.test(p["Full Name"]) },
+                { key: "cpu_i9", label: "Core i9", icon: "fa-microchip", match: p => /\bi9\b/i.test(p["Full Name"]) },
+                { key: "cpu_r3", label: "Ryzen 3", icon: "fa-microchip", match: p => /ryzen\s*3/i.test(p["Full Name"]) },
+                { key: "cpu_r5", label: "Ryzen 5", icon: "fa-microchip", match: p => /ryzen\s*5/i.test(p["Full Name"]) },
+                { key: "cpu_r7", label: "Ryzen 7", icon: "fa-microchip", match: p => /ryzen\s*7/i.test(p["Full Name"]) },
+                { key: "cpu_r9", label: "Ryzen 9", icon: "fa-microchip", match: p => /ryzen\s*9/i.test(p["Full Name"]) },
+                { key: "cpu_tr", label: "Threadripper", icon: "fa-microchip", match: p => /threadripper/i.test(p["Full Name"]) },
+            ]},
             { group: "Clock Speed", filters: [
-                { key: "ghz_3.5", label: "3.5GHz+", icon: "fa-microchip", match: p => /3\.[5-9]ghz|[4-9]\.[0-9]ghz/i.test(p["Full Name"]) },
-                { key: "ghz_5.5", label: "5.5GHz+", icon: "fa-microchip", match: p => /5\.[5-9]ghz|[6-9]\.[0-9]ghz/i.test(p["Full Name"]) },
+                { key: "ghz_3.5", label: "3.5GHz+", icon: "fa-gauge-high", match: p => /3\.[5-9]ghz|[4-9]\.[0-9]ghz/i.test(p["Full Name"]) },
+                { key: "ghz_5.0", label: "5.0GHz+", icon: "fa-gauge-high", match: p => /5\.[0-9]ghz|[6-9]\.[0-9]ghz/i.test(p["Full Name"]) },
             ]},
         ],
         "SSD": [
@@ -131,9 +151,31 @@ document.addEventListener("DOMContentLoaded", () => {
         ],
         "PSU": [
             { group: "Wattage", filters: [
-                { key: "psu_550",  label: "550W",  icon: "fa-plug", match: p => /\b550w\b/i.test(p["Full Name"]) },
-                { key: "psu_650",  label: "650W",  icon: "fa-plug", match: p => /\b650w\b/i.test(p["Full Name"]) },
-                { key: "psu_750",  label: "750W",  icon: "fa-plug", match: p => /\b750w\b/i.test(p["Full Name"]) },
+                { key: "psu_sub550", label: "Under 550W", icon: "fa-plug", match: p => {
+                    const m = p["Full Name"].match(/\b(\d{3,4})\s*w\b/i);
+                    return m && parseInt(m[1]) < 550;
+                }},
+                { key: "psu_550", label: "550W - 650W", icon: "fa-plug", match: p => {
+                    const m = p["Full Name"].match(/\b(\d{3,4})\s*w\b/i);
+                    return m && (parseInt(m[1]) >= 550 && parseInt(m[1]) <= 650);
+                }},
+                { key: "psu_750", label: "700W - 850W", icon: "fa-plug", match: p => {
+                    const m = p["Full Name"].match(/\b(\d{3,4})\s*w\b/i);
+                    return m && (parseInt(m[1]) >= 700 && parseInt(m[1]) <= 850);
+                }},
+                { key: "psu_1000", label: "1000W+", icon: "fa-plug", match: p => {
+                    const m = p["Full Name"].match(/\b(\d{3,4})\s*w\b/i);
+                    return m && parseInt(m[1]) >= 1000;
+                }},
+            ]},
+            { group: "Certification", filters: [
+                { key: "psu_bronze",   label: "80+ Bronze",   icon: "fa-medal", match: p => /bronze/i.test(p["Full Name"]) },
+                { key: "psu_gold",     label: "80+ Gold",     icon: "fa-medal", match: p => /gold/i.test(p["Full Name"]) },
+                { key: "psu_platinum", label: "80+ Platinum / Titanium", icon: "fa-medal", match: p => /platinum|titanium/i.test(p["Full Name"]) },
+            ]},
+            { group: "Modularity", filters: [
+                { key: "psu_modular", label: "Fully Modular", icon: "fa-circle-nodes", match: p => /fully\s*modular|full\s*modular/i.test(p["Full Name"]) },
+                { key: "psu_semi",    label: "Semi / Non-Modular", icon: "fa-circle", match: p => !/fully\s*modular|full\s*modular/i.test(p["Full Name"]) },
             ]},
         ],
         "Controllers": [
@@ -167,6 +209,134 @@ document.addEventListener("DOMContentLoaded", () => {
                 { key: "cam_120fps", label: "120fps", icon: "fa-film", match: p => /120fps|120 fps/i.test(p["Full Name"]) },
             ]},
         ],
+        "Thermal Paste": [
+            { group: "Type", filters: [
+                { key: "paste_grease", label: "Thermal Paste", icon: "fa-temperature-half", match: p => /paste|grease|compound/i.test(p["Full Name"]) },
+                { key: "paste_metal",  label: "Liquid Metal",  icon: "fa-droplet",          match: p => /liquid.metal|conductonaut/i.test(p["Full Name"]) },
+                { key: "paste_pad",    label: "Thermal Pad",   icon: "fa-square",           match: p => /pad/i.test(p["Full Name"]) },
+            ]}
+        ],
+        "Laptop": [
+            { group: "Processor", filters: [
+                { key: "laptop_cpu_i5", label: "Intel Core i5", icon: "fa-microchip", match: p => /i5\b/i.test(p["Full Name"]) },
+                { key: "laptop_cpu_i7", label: "Intel Core i7", icon: "fa-microchip", match: p => /i7\b/i.test(p["Full Name"]) },
+                { key: "laptop_cpu_i9", label: "Intel Core i9", icon: "fa-microchip", match: p => /i9\b/i.test(p["Full Name"]) },
+                { key: "laptop_cpu_ultra", label: "Core Ultra 5/7/9", icon: "fa-microchip", match: p => /core\s*ultra/i.test(p["Full Name"]) },
+                { key: "laptop_cpu_r5", label: "Ryzen 5",       icon: "fa-microchip", match: p => /ryzen\s*5/i.test(p["Full Name"]) },
+                { key: "laptop_cpu_r7", label: "Ryzen 7",       icon: "fa-microchip", match: p => /ryzen\s*7/i.test(p["Full Name"]) },
+                { key: "laptop_cpu_r9", label: "Ryzen 9",       icon: "fa-microchip", match: p => /ryzen\s*9/i.test(p["Full Name"]) },
+                { key: "laptop_cpu_apple", label: "Apple Silicon M1-M4", icon: "fa-apple", match: p => /\b(?:m1|m2|m3|m4)\b/i.test(p["Full Name"]) },
+            ]},
+            { group: "Graphics (GPU)", filters: [
+                { key: "laptop_gpu_rtx50", label: "NVIDIA RTX 50-Series", icon: "fa-server", match: p => /rtx\s*50\d\d|rtx\s*50-series/i.test(p["Full Name"]) },
+                { key: "laptop_gpu_rtx4050", label: "RTX 4050", icon: "fa-server", match: p => /4050/i.test(p["Full Name"]) },
+                { key: "laptop_gpu_rtx4060", label: "RTX 4060", icon: "fa-server", match: p => /4060/i.test(p["Full Name"]) },
+                { key: "laptop_gpu_rtx4070", label: "RTX 4070", icon: "fa-server", match: p => /4070/i.test(p["Full Name"]) },
+                { key: "laptop_gpu_rtx4080_90", label: "RTX 4080/4090", icon: "fa-server", match: p => /4080|4090/i.test(p["Full Name"]) },
+                { key: "laptop_gpu_rtx30", label: "NVIDIA RTX 30-Series", icon: "fa-server", match: p => /rtx\s*30\d\d/i.test(p["Full Name"]) },
+                { key: "laptop_gpu_gtx", label: "NVIDIA GTX Series", icon: "fa-server", match: p => /gtx/i.test(p["Full Name"]) },
+                { key: "laptop_gpu_integrated", label: "Integrated / Radeon / Iris Xe", icon: "fa-server", match: p => /radeon|iris|uhd|integrated/i.test(p["Full Name"]) || !/rtx|gtx|geforce|quadro/i.test(p["Full Name"]) },
+            ]},
+            { group: "Memory (RAM)", filters: [
+                { key: "laptop_ram_8",  label: "8GB",   icon: "fa-memory", match: p => /\b8\s*gb\b/i.test(p["Full Name"]) && !/rtx|graphics/i.test(p["Full Name"]) },
+                { key: "laptop_ram_16", label: "16GB",  icon: "fa-memory", match: p => /\b16\s*gb\b/i.test(p["Full Name"]) && !/rtx|graphics/i.test(p["Full Name"]) },
+                { key: "laptop_ram_32", label: "32GB+", icon: "fa-memory", match: p => /\b(32|64)\s*gb\b/i.test(p["Full Name"]) && !/rtx|graphics/i.test(p["Full Name"]) },
+            ]},
+        ],
+        "Prebuilt PC": [
+            { group: "Processor", filters: [
+                { key: "pc_cpu_i3_r3", label: "Core i3 / Ryzen 3", icon: "fa-microchip", match: p => /i3\b|ryzen\s*3/i.test(p["Full Name"]) },
+                { key: "pc_cpu_i5_r5", label: "Core i5 / Ryzen 5", icon: "fa-microchip", match: p => /i5\b|ryzen\s*5/i.test(p["Full Name"]) },
+                { key: "pc_cpu_i7_r7", label: "Core i7 / Ryzen 7", icon: "fa-microchip", match: p => /i7\b|ryzen\s*7/i.test(p["Full Name"]) },
+                { key: "pc_cpu_i9_r9", label: "Core i9 / Ryzen 9", icon: "fa-microchip", match: p => /i9\b|ryzen\s*9/i.test(p["Full Name"]) },
+            ]},
+            { group: "Graphics Card", filters: [
+                { key: "pc_gpu_rtx50", label: "RTX 50-Series", icon: "fa-server", match: p => /rtx\s*50\d\d/i.test(p["Full Name"]) },
+                { key: "pc_gpu_rtx4060", label: "RTX 4060 / Ti", icon: "fa-server", match: p => /4060/i.test(p["Full Name"]) },
+                { key: "pc_gpu_rtx4070", label: "RTX 4070 / Ti", icon: "fa-server", match: p => /4070/i.test(p["Full Name"]) },
+                { key: "pc_gpu_rtx4080_90", label: "RTX 4080 / 4090", icon: "fa-server", match: p => /4080|4090/i.test(p["Full Name"]) },
+                { key: "pc_gpu_rtx30", label: "RTX 30-Series", icon: "fa-server", match: p => /rtx\s*30\d\d/i.test(p["Full Name"]) },
+                { key: "pc_gpu_gtx", label: "GTX Series", icon: "fa-server", match: p => /gtx/i.test(p["Full Name"]) },
+                { key: "pc_gpu_integrated", label: "Integrated Graphics", icon: "fa-server", match: p => /integrated|uhd|radeon|graphics/i.test(p["Full Name"]) && !/rtx|gtx|geforce/i.test(p["Full Name"]) },
+            ]},
+        ],
+        "Motherboard": [
+            { group: "Socket & Chipset", filters: [
+                { key: "mb_am5",     label: "AMD AM5",      icon: "fa-chess-board", match: p => /\bam5\b|b650|x670|a620/i.test(p["Full Name"]) },
+                { key: "mb_am4",     label: "AMD AM4",      icon: "fa-chess-board", match: p => /\bam4\b|b550|x570|b450|a520/i.test(p["Full Name"]) },
+                { key: "mb_lga1700", label: "Intel LGA1700", icon: "fa-chess-board", match: p => /lga1700|lga\s*1700|z790|b760|h610|z690|b660/i.test(p["Full Name"]) },
+                { key: "mb_lga1200", label: "Intel LGA1200", icon: "fa-chess-board", match: p => /lga1200|lga\s*1200|h510|b560|z590/i.test(p["Full Name"]) },
+            ]},
+            { group: "Memory Support", filters: [
+                { key: "mb_ddr5", label: "DDR5", icon: "fa-memory", match: p => /ddr5/i.test(p["Full Name"]) },
+                { key: "mb_ddr4", label: "DDR4", icon: "fa-memory", match: p => /ddr4/i.test(p["Full Name"]) },
+            ]},
+            { group: "Form Factor", filters: [
+                { key: "mb_atx",  label: "ATX",       icon: "fa-chess-board", match: p => /\batx\b/i.test(p["Full Name"]) && !/micro|m-atx|mini|itx/i.test(p["Full Name"]) },
+                { key: "mb_matx", label: "Micro-ATX", icon: "fa-chess-board", match: p => /micro.?atx|m.?atx/i.test(p["Full Name"]) },
+                { key: "mb_itx",  label: "Mini-ITX",  icon: "fa-chess-board", match: p => /mini.?itx|itx/i.test(p["Full Name"]) },
+            ]}
+        ],
+        "RAM": [
+            { group: "DDR Generation", filters: [
+                { key: "ram_ddr5", label: "DDR5", icon: "fa-memory", match: p => /ddr5/i.test(p["Full Name"]) },
+                { key: "ram_ddr4", label: "DDR4", icon: "fa-memory", match: p => /ddr4/i.test(p["Full Name"]) },
+            ]},
+            { group: "Capacity", filters: [
+                { key: "ram_8gb",  label: "8GB",   icon: "fa-memory", match: p => /\b8\s*gb\b/i.test(p["Full Name"]) && !/x\s*2|2\s*x/i.test(p["Full Name"]) },
+                { key: "ram_16gb", label: "16GB",  icon: "fa-memory", match: p => /\b16\s*gb\b/i.test(p["Full Name"]) || /8gb\s*x\s*2|2\s*x\s*8gb/i.test(p["Full Name"]) },
+                { key: "ram_32gb", label: "32GB",  icon: "fa-memory", match: p => /\b32\s*gb\b/i.test(p["Full Name"]) || /16gb\s*x\s*2|2\s*x\s*16gb/i.test(p["Full Name"]) },
+                { key: "ram_64gb", label: "64GB+", icon: "fa-memory", match: p => /\b(64|128)\s*gb\b/i.test(p["Full Name"]) || /32gb\s*x\s*2|2\s*x\s*32gb/i.test(p["Full Name"]) },
+            ]},
+            { group: "Form Factor", filters: [
+                { key: "ram_sodimm",  label: "Laptop (SO-DIMM)", icon: "fa-laptop", match: p => /sodimm|so-dimm|laptop/i.test(p["Full Name"]) },
+                { key: "ram_desktop", label: "Desktop (UDIMM)",  icon: "fa-desktop", match: p => !/sodimm|so-dimm|laptop/i.test(p["Full Name"]) },
+            ]}
+        ],
+        "Case": [
+            { group: "Color", filters: [
+                { key: "case_white", label: "White", icon: "fa-palette", match: p => /\bwhite\b/i.test(p["Full Name"]) },
+                { key: "case_black", label: "Black", icon: "fa-palette", match: p => /\bblack\b/i.test(p["Full Name"]) },
+            ]},
+            { group: "Form Factor", filters: [
+                { key: "case_itx",   label: "Mini-ITX / SFF", icon: "fa-box", match: p => /itx|mini-itx|sff/i.test(p["Full Name"]) },
+                { key: "case_mid",   label: "Mid Tower",      icon: "fa-box", match: p => /mid.?tower|h5 flow|h7 flow|o11/i.test(p["Full Name"]) },
+                { key: "case_full",  label: "Full Tower",     icon: "fa-box", match: p => /full.?tower|h9 flow/i.test(p["Full Name"]) },
+            ]},
+            { group: "Features", filters: [
+                { key: "case_rgb",   label: "RGB / ARGB", icon: "fa-lightbulb", match: p => /rgb|argb/i.test(p["Full Name"]) },
+                { key: "case_glass", label: "Glass Panel",icon: "fa-window-maximize", match: p => /glass|panoramic/i.test(p["Full Name"]) },
+            ]}
+        ],
+        "Fan": [
+            { group: "Cooler Type", filters: [
+                { key: "cooling_air",    label: "Air Cooler",    icon: "fa-wind", match: p => /air|tower cooler/i.test(p["Full Name"]) || !/aio|liquid|water/i.test(p["Full Name"]) },
+                { key: "cooling_liquid", label: "Liquid (AIO)", icon: "fa-droplet", match: p => /aio|liquid|water/i.test(p["Full Name"]) },
+            ]},
+            { group: "Radiator Size", filters: [
+                { key: "rad_120_140", label: "120mm / 140mm", icon: "fa-fan", match: p => /120|140/i.test(p["Full Name"]) && /aio|liquid|water/i.test(p["Full Name"]) },
+                { key: "rad_240_280", label: "240mm / 280mm", icon: "fa-fan", match: p => /240|280/i.test(p["Full Name"]) },
+                { key: "rad_360_420", label: "360mm / 420mm", icon: "fa-fan", match: p => /360|420/i.test(p["Full Name"]) },
+            ]},
+            { group: "Pack Quantity", filters: [
+                { key: "fan_single", label: "Single Fan", icon: "fa-fan", match: p => !/pack|kit|x2|x3/i.test(p["Full Name"]) },
+                { key: "fan_multi",  label: "Multi Pack", icon: "fa-cubes", match: p => /pack|kit|x2|x3/i.test(p["Full Name"]) },
+            ]}
+        ],
+        "Desks & Chairs": [
+            { group: "Type", filters: [
+                { key: "furniture_chair", label: "Gaming Chair", icon: "fa-chair",  match: p => /chair|throne/i.test(p["Full Name"]) },
+                { key: "furniture_desk",  label: "Desk / Table",  icon: "fa-table",  match: p => /desk|table/i.test(p["Full Name"]) },
+                { key: "furniture_mat",   label: "Desk Mat",      icon: "fa-square", match: p => /mat|pad/i.test(p["Full Name"]) },
+            ]}
+        ],
+        "Lighting & RGB": [
+            { group: "Type", filters: [
+                { key: "light_strip",      label: "LED Strip",   icon: "fa-grip-lines", match: p => /strip/i.test(p["Full Name"]) },
+                { key: "light_lamp",       label: "Lamp / Light",icon: "fa-lightbulb",  match: p => /lamp|light|screenbar/i.test(p["Full Name"]) },
+                { key: "light_hub",        label: "RGB Hub / Controller", icon: "fa-network-wired", match: p => /hub|controller/i.test(p["Full Name"]) },
+            ]}
+        ],
     };
 
     // Category details with specific icons mapping
@@ -182,6 +352,9 @@ document.addEventListener("DOMContentLoaded", () => {
         "Case": { label: "PC Cases", icon: "fa-box", emoji: "🖥", color: "#d946ef", desc: "ATX towers & compact cases", tags: ["Full Tower", "Mid Tower", "Mini-ITX", "RGB", "Tempered Glass", "White"] },
         "PSU": { label: "Power Supplies", icon: "fa-plug", emoji: "⚡", color: "#eab308", desc: "Modular & semi-modular PSUs", tags: ["550W", "650W", "750W", "850W", "1000W", "80+ Gold", "80+ Platinum", "Fully Modular"] },
         "Fan": { label: "Fans & Coolers", icon: "fa-fan", emoji: "🌀", color: "#38bdf8", desc: "Air coolers & AIO liquid cooling", tags: ["Air Cooler", "120mm AIO", "240mm AIO", "360mm AIO", "ARGB", "Low Profile"] },
+        "Thermal Paste": { label: "Thermal Paste", icon: "fa-temperature-half", emoji: "🧪", color: "#f43f5e", desc: "Thermal paste, liquid metal & pads", tags: ["Thermal Paste", "Liquid Metal", "Thermal Pads", "Kryonaut", "MX-6", "Conductonaut"] },
+        "Laptop": { label: "Laptops", icon: "fa-laptop", emoji: "💻", color: "#6366f1", desc: "Gaming, business & student laptops", tags: ["Gaming Laptop", "Ultrabook", "MacBook", "Intel Core", "Ryzen", "RTX Laptops"] },
+        "Prebuilt PC": { label: "Prebuilt PCs", icon: "fa-desktop-retro", emoji: "🖥️", color: "#10b981", desc: "Pre-assembled gaming & office desktops", tags: ["Gaming PC", "Office PC", "Branded PC", "Custom PC", "Workstation"] },
         "Peripherals": { label: "Peripherals", icon: "fa-keyboard", emoji: "⌨️", color: "#06b6d4", desc: "Mice, keyboards & mouse pads", tags: ["Gaming Mouse", "Mechanical KB", "Mouse Pad", "Wireless", "Wired", "TKL", "60%"] },
         "Controllers": { label: "Controllers", icon: "fa-gamepad", emoji: "🎮", color: "#f43f5e", desc: "Console & PC game controllers", tags: ["Xbox", "PlayStation", "PC USB", "Wireless", "Wired", "Fight Stick"] },
         "Audio Gear": { label: "Audio Gear", icon: "fa-headphones", emoji: "🎧", color: "#8b5cf6", desc: "Headsets, microphones & speakers", tags: ["Gaming Headset", "Studio Mic", "USB Mic", "XLR", "7.1 Surround", "Active Noise Cancel"] },
@@ -238,8 +411,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnThemeToggle = document.getElementById("theme-toggle-btn");
     const themeIcon = document.getElementById("theme-icon");
 
-    // Initialize Theme state (Default to Light — dark-theme class enables dark mode)
-    const storedTheme = localStorage.getItem("theme") || "light";
+    // Initialize Theme state (Default: Dark Mode)
+    const storedTheme = localStorage.getItem("theme") || "dark";
     if (storedTheme === "dark") {
         document.body.classList.add("dark-theme");
         if (themeIcon) themeIcon.className = "fa-solid fa-sun";
@@ -266,21 +439,15 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // ---- Header search bar syncing ----
+    // ---- Header search bar drives the search query ----
     const headerSearchBar = document.getElementById("header-search-bar");
     if (headerSearchBar) {
         let headerTypingTimer;
         headerSearchBar.addEventListener("input", () => {
             clearTimeout(headerTypingTimer);
-            const val = headerSearchBar.value.trim();
-            // Sync to sidebar search input
-            if (searchInput) {
-                searchInput.value = val;
-                btnClearSearch.style.display = val.length > 0 ? "block" : "none";
-            }
-            searchQuery = val;
+            searchQuery = headerSearchBar.value.trim();
             // If we are on the homepage and user types, jump to All category
-            if (val.length > 0 && catHomepage.style.display !== "none") {
+            if (searchQuery.length > 0 && catHomepage.style.display !== "none") {
                 goToCategory("all");
             }
             headerTypingTimer = setTimeout(() => {
@@ -466,6 +633,76 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // Helper to count matching products for a simulated spec filter option
+    // based on all OTHER current active filters (store, category, price, search, stock, and other spec filters).
+    function getFilterMatchCount(specKey, categoryKey) {
+        const specs = SPEC_FILTERS[categoryKey] || [];
+        let targetFilter = null;
+        for (const group of specs) {
+            for (const f of group.filters) {
+                if (f.key === specKey) {
+                    targetFilter = f;
+                    break;
+                }
+            }
+            if (targetFilter) break;
+        }
+        if (!targetFilter) return 0;
+
+        const simulatedSpecs = new Set(activeSpecFilters);
+        simulatedSpecs.add(specKey);
+
+        let count = 0;
+        allProducts.forEach(p => {
+            // Check Store origin
+            if (!selectedStores.includes(p["Website Name"])) return;
+
+            // Check Component Category
+            if (selectedCategory !== "all" && p.category_key !== selectedCategory) return;
+
+            // Check Stock status
+            if (stockOnly && p.Status !== "In Stock") return;
+
+            // Check Price boundaries
+            if (p.price_val < currentFilterMin || p.price_val > currentFilterMax) return;
+
+            // Check simulated spec filters (OR within group, AND across groups)
+            for (const group of specs) {
+                const activeGroupFilters = group.filters.filter(f => simulatedSpecs.has(f.key));
+                if (activeGroupFilters.length > 0) {
+                    if (!activeGroupFilters.some(f => f.match(p))) return;
+                }
+            }
+
+            // Check Search query
+            if (searchQuery) {
+                const titleLower = p["Full Name"].toLowerCase();
+                const catLower = p["Component Type"].toLowerCase();
+                const storeLower = p["Website Name"].toLowerCase();
+                const terms = searchQuery.toLowerCase().split(/\s+/);
+                const matchesSearch = terms.every(term =>
+                    titleLower.includes(term) ||
+                    catLower.includes(term) ||
+                    storeLower.includes(term)
+                );
+                if (!matchesSearch) return;
+            }
+
+            count++;
+        });
+
+        return count;
+    }
+
+    // Helper to check if a specific spec filter option has any matching products
+    // based on all OTHER current active filters.
+    function wouldFilterHaveResults(specKey, categoryKey) {
+        if (activeSpecFilters.has(specKey)) {
+            return true;
+        }
+        return getFilterMatchCount(specKey, categoryKey) > 0;
+    }
+
     // ---- Render spec filter pills for current category (collapsible accordion) ----
     function renderSpecFilterUI(categoryKey) {
         const specGroup = document.getElementById("spec-filter-group");
@@ -479,34 +716,61 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+        // Remember which accordions were manually open before rewriting the HTML
+        const openGroups = new Set();
+        specContainer.querySelectorAll(".spec-accordion-body.open").forEach(body => {
+            openGroups.add(body.id);
+        });
+
         specGroup.style.display = "flex";
         let html = "";
+        let visibleGroupsCount = 0;
+
         specs.forEach((group, idx) => {
+            // Filter pills to only show those that are active OR would yield results if clicked
+            const visibleFilters = group.filters.filter(f => {
+                const isActive = activeSpecFilters.has(f.key);
+                const hasResults = wouldFilterHaveResults(f.key, categoryKey);
+                return isActive || hasResults;
+            });
+
+            // If no filters are visible in this group, do not render the group at all
+            if (visibleFilters.length === 0) return;
+            visibleGroupsCount++;
+
             // Check if any filter in this group is active
-            const hasActive = group.filters.some(f => activeSpecFilters.has(f.key));
-            // Start collapsed unless a filter inside is already active
-            const isOpen = hasActive;
+            const hasActive = visibleFilters.some(f => activeSpecFilters.has(f.key));
             const groupId = `spec-grp-${idx}`;
+            
+            // Start open if: manually open previously OR has active filters inside
+            const isOpen = openGroups.has(groupId) || hasActive;
 
             html += `<div class="spec-accordion" data-group-idx="${idx}">`;
             // Toggle button header
             html += `<button class="spec-accordion-toggle ${hasActive ? 'has-active' : ''} ${isOpen ? 'open' : ''}" data-target="${groupId}">
                 <span class="spec-accordion-label">${group.group}</span>
-                ${hasActive ? `<span class="spec-active-badge">${group.filters.filter(f => activeSpecFilters.has(f.key)).length}</span>` : ''}
+                ${hasActive ? `<span class="spec-active-badge">${visibleFilters.filter(f => activeSpecFilters.has(f.key)).length}</span>` : ''}
                 <i class="fa-solid fa-chevron-down spec-accordion-chevron"></i>
             </button>`;
             // Collapsible body
             html += `<div class="spec-accordion-body ${isOpen ? 'open' : ''}" id="${groupId}">`;
             html += `<div class="spec-filter-pills">`;
-            group.filters.forEach(f => {
+            visibleFilters.forEach(f => {
                 const isActive = activeSpecFilters.has(f.key);
+                const count = getFilterMatchCount(f.key, categoryKey);
                 html += `<button class="spec-filter-pill ${isActive ? 'active' : ''}" data-spec-key="${f.key}">
-                        <i class="fa-solid ${f.icon}"></i>${f.label}
+                        <i class="fa-solid ${f.icon}"></i>${f.label} <span class="spec-pill-count">${count}</span>
                     </button>`;
             });
             html += `</div></div></div>`;
         });
+
         specContainer.innerHTML = html;
+
+        // If all accordion groups are hidden, hide the container group
+        if (visibleGroupsCount === 0) {
+            specGroup.style.display = "none";
+        }
 
         // Bind accordion toggles
         specContainer.querySelectorAll(".spec-accordion-toggle").forEach(toggle => {
@@ -525,15 +789,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 const key = pill.getAttribute("data-spec-key");
                 if (activeSpecFilters.has(key)) {
                     activeSpecFilters.delete(key);
-                    pill.classList.remove("active");
                 } else {
                     activeSpecFilters.add(key);
-                    pill.classList.add("active");
                 }
                 currentPage = 1;
                 applyFiltersAndSorting();
-                // Re-render to update badges without closing open accordions
-                renderSpecFilterUI(selectedCategory);
             });
         });
     }
@@ -652,18 +912,15 @@ document.addEventListener("DOMContentLoaded", () => {
             // Check Price boundaries
             if (p.price_val < currentFilterMin || p.price_val > currentFilterMax) return false;
 
-            // Check Spec Filters — strict AND: every selected pill must match the product
+            // Check Spec Filters — OR within groups, AND across groups
             if (activeSpecFilters.size > 0) {
                 const specs = SPEC_FILTERS[selectedCategory] || [];
-                // Collect all active filter objects
-                const activeDefs = [];
-                specs.forEach(group => {
-                    group.filters.forEach(f => {
-                        if (activeSpecFilters.has(f.key)) activeDefs.push(f);
-                    });
-                });
-                // Every selected pill must match (pure AND)
-                if (!activeDefs.every(f => f.match(p))) return false;
+                for (const group of specs) {
+                    const activeGroupFilters = group.filters.filter(f => activeSpecFilters.has(f.key));
+                    if (activeGroupFilters.length > 0) {
+                        if (!activeGroupFilters.some(f => f.match(p))) return false;
+                    }
+                }
             }
 
             // Check Search query
@@ -699,6 +956,9 @@ document.addEventListener("DOMContentLoaded", () => {
         resultsCountText.innerHTML = `Found <span style="color:var(--neon-cyan);">${filteredProducts.length}</span> components matching filters`;
         renderChips();
         renderProductsCatalog();
+        
+        // Dynamically re-render spec filters so incompatible options auto-hide in real-time
+        renderSpecFilterUI(selectedCategory);
     }
 
     // Renders tags at the top showing current active filtering choices
@@ -1197,18 +1457,13 @@ document.addEventListener("DOMContentLoaded", () => {
     btnResetFilters.addEventListener("click", () => {
         // Reset Search
         searchQuery = "";
-        searchInput.value = "";
-        btnClearSearch.style.display = "none";
+        if (headerSearchBar) headerSearchBar.value = "";
 
         // Reset Category
         selectedCategory = "all";
         const allCatBtn = categoryFilterList.querySelector('[data-category="all"]');
         categoryFilterList.querySelectorAll(".btn-category").forEach(b => b.classList.remove("active"));
         if (allCatBtn) allCatBtn.classList.add("active");
-
-        // Reset Stores Checkbox
-        selectedStores = ["iGeek.jo", "City Center", "Oriental Store", "PC Circle", "Taipei Computer", "MCC Jordan", "Game On Jordan"];
-        storeFilters.forEach(cb => cb.checked = true);
 
         // Reset Price
         currentFilterMin = dataPriceMin;
@@ -1233,44 +1488,8 @@ document.addEventListener("DOMContentLoaded", () => {
         showNotification("Filters have been completely reset.");
     });
 
-    // Instant search input typing
-    let typingTimer;
-    searchInput.addEventListener("input", () => {
-        clearTimeout(typingTimer);
-        searchQuery = searchInput.value.trim();
+    // Store Checkbox filters — no longer in sidebar, all stores always active
 
-        if (searchQuery.length > 0) {
-            btnClearSearch.style.display = "block";
-        } else {
-            btnClearSearch.style.display = "none";
-        }
-
-        typingTimer = setTimeout(() => {
-            currentPage = 1;
-            applyFiltersAndSorting();
-        }, 300); // 300ms Debounce typing
-    });
-
-    btnClearSearch.addEventListener("click", () => {
-        searchInput.value = "";
-        searchQuery = "";
-        btnClearSearch.style.display = "none";
-        currentPage = 1;
-        applyFiltersAndSorting();
-    });
-
-    // Store Checkbox filters clicking
-    storeFilters.forEach(checkbox => {
-        checkbox.addEventListener("change", () => {
-            const activeStores = [];
-            storeFilters.forEach(cb => {
-                if (cb.checked) activeStores.push(cb.value);
-            });
-            selectedStores = activeStores;
-            currentPage = 1;
-            applyFiltersAndSorting();
-        });
-    });
 
     // Stock toggle clicking
     stockToggle.addEventListener("change", () => {

@@ -1016,6 +1016,33 @@ body.dark-theme .spec-active-badge {
     transform: translateY(-1px);
 }
 
+.spec-pill-count {
+    font-size: 0.65rem;
+    font-weight: 700;
+    background: rgba(0, 0, 0, 0.08);
+    color: var(--text-secondary);
+    padding: 1px 6px;
+    border-radius: 20px;
+    margin-left: 4px;
+    display: inline-block;
+    transition: all 0.2s ease;
+}
+
+body.dark-theme .spec-pill-count {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-muted);
+}
+
+.spec-filter-pill.active .spec-pill-count {
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+}
+
+body.dark-theme .spec-filter-pill.active .spec-pill-count {
+    background: rgba(0, 0, 0, 0.15);
+    color: var(--navy);
+}
+
 /* Dark theme overrides */
 body.dark-theme .spec-accordion {
     border-color: var(--border-light);
