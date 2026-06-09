@@ -43,6 +43,10 @@
 
             <!-- Header Actions -->
             <div class="header-actions">
+                <button class="header-cart-btn" id="cart-toggle-btn" title="View Cart">
+                    <i class="fa-solid fa-shopping-cart"></i>
+                    <span class="cart-badge" id="cart-badge-count">0</span>
+                </button>
                 <button class="theme-toggle" id="theme-toggle-btn" title="Toggle Dark / Light Mode">
                     <i class="fa-solid fa-moon" id="theme-icon"></i>
                 </button>
@@ -261,91 +265,30 @@
 
     </div>
 
-    <!-- ====================== FLOATING COMPARE TRAY ====================== -->
-    <div class="compare-tray" id="compare-tray">
-        <div class="compare-tray-header" id="compare-tray-toggle">
-            <div class="compare-title">
-                <i class="fa-solid fa-scale-balanced tray-icon"></i>
-                <h3>Compare Products (<span id="compare-count">0</span>/3)</h3>
+    <!-- ====================== SHOPPING CART DRAWER ====================== -->
+    <div class="cart-drawer-overlay" id="cart-drawer-overlay"></div>
+    <div class="cart-drawer" id="cart-drawer">
+        <div class="cart-drawer-header">
+            <div class="cart-drawer-title">
+                <i class="fa-solid fa-shopping-cart"></i>
+                <h3>Shopping Cart (<span id="cart-total-count">0</span>)</h3>
             </div>
-            <div class="compare-tray-controls">
-                <span class="compare-hint">Select up to 3 items to compare side-by-side</span>
-                <button class="btn-toggle-tray">
-                    <i class="fa-solid fa-chevron-up" id="tray-chevron"></i>
-                </button>
-            </div>
+            <button class="btn-close-cart" id="btn-close-cart" title="Close Cart">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
         </div>
-        <div class="compare-tray-body">
-            <div class="compare-slots-container" id="compare-slots">
-                <!-- Slots rendered dynamically by JS -->
-            </div>
-            <div class="compare-action-block">
-                <button class="btn-compare-action" id="btn-trigger-compare" disabled>
-                    <i class="fa-solid fa-circle-check"></i> Compare Now
-                </button>
-                <button class="btn-clear-compare" id="btn-clear-compare-all">Clear All</button>
-            </div>
+        <div class="cart-drawer-body" id="cart-items-container">
+            <!-- Cart items rendered dynamically by JS -->
         </div>
-    </div>
-
-    <!-- ====================== SIDE-BY-SIDE COMPARE MODAL ====================== -->
-    <div class="modal-overlay" id="compare-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2><i class="fa-solid fa-scale-balanced"></i> Side-by-Side Comparison</h2>
-                <button class="btn-close-modal" id="btn-close-compare-modal">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
+        <div class="cart-drawer-footer">
+            <div class="cart-total-row">
+                <span>Total:</span>
+                <span class="cart-total-price" id="cart-total-price">0.00 JOD</span>
             </div>
-            <div class="modal-body">
-                <div class="comparison-table-wrapper">
-                    <table class="comparison-table">
-                        <thead>
-                            <tr id="compare-row-headers">
-                                <th class="attr-header">Attribute</th>
-                                <!-- Dynamic item headers inserted here -->
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr id="compare-row-image">
-                                <td class="attr-label">Product Image</td>
-                            </tr>
-                            <tr id="compare-row-store">
-                                <td class="attr-label">Store</td>
-                            </tr>
-                            <tr id="compare-row-category">
-                                <td class="attr-label">Category</td>
-                            </tr>
-                            <tr id="compare-row-name">
-                                <td class="attr-label">Product Name</td>
-                            </tr>
-                            <tr id="compare-row-price">
-                                <td class="attr-label">Price (JOD)</td>
-                            </tr>
-                            <tr id="compare-row-size">
-                                <td class="attr-label">Screen Size</td>
-                            </tr>
-                            <tr id="compare-row-hz">
-                                <td class="attr-label">Refresh Rate</td>
-                            </tr>
-                            <tr id="compare-row-ms">
-                                <td class="attr-label">Response Time</td>
-                            </tr>
-                            <tr id="compare-row-arms">
-                                <td class="attr-label">Arms Supported</td>
-                            </tr>
-                            <tr id="compare-row-weight">
-                                <td class="attr-label">Weight Capacity</td>
-                            </tr>
-                            <tr id="compare-row-status">
-                                <td class="attr-label">Availability</td>
-                            </tr>
-                            <tr id="compare-row-action">
-                                <td class="attr-label">Store Link</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="cart-action-buttons">
+                <button class="btn-clear-cart" id="btn-clear-cart-all">
+                    <i class="fa-solid fa-trash-can"></i> Clear Cart
+                </button>
             </div>
         </div>
     </div>

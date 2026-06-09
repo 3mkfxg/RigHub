@@ -6,7 +6,15 @@ document.addEventListener("DOMContentLoaded", () => {
     // STATE MANAGEMENT
     let allProducts = [];
     let filteredProducts = [];
-    let comparedProducts = [];
+    let cartProducts = [];
+    try {
+        const storedCart = localStorage.getItem("priceWebCart");
+        if (storedCart) {
+            cartProducts = JSON.parse(storedCart);
+        }
+    } catch (e) {
+        console.error("Failed to load cart from localStorage", e);
+    }
 
     let currentPage = 1;
     const itemsPerPage = 12;
@@ -394,18 +402,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const resultsCountText = document.getElementById("results-count-text");
     const activeChipsContainer = document.getElementById("active-chips-container");
 
-    // Compare UI elements
-    const compareTray = document.getElementById("compare-tray");
-    const compareTrayToggle = document.getElementById("compare-tray-toggle");
-    const trayChevron = document.getElementById("tray-chevron");
-    const compareSlots = document.getElementById("compare-slots");
-    const btnTriggerCompare = document.getElementById("btn-trigger-compare");
-    const btnClearCompareAll = document.getElementById("btn-clear-compare-all");
-    const compareCountBadge = document.getElementById("compare-count");
-
-    // Compare Modal elements
-    const compareModal = document.getElementById("compare-modal");
-    const btnCloseCompareModal = document.getElementById("btn-close-compare-modal");
+    // Cart Drawer UI elements
+    const cartDrawer = document.getElementById("cart-drawer");
+    const cartDrawerOverlay = document.getElementById("cart-drawer-overlay");
+    const cartToggleBtn = document.getElementById("cart-toggle-btn");
+    const btnCloseCart = document.getElementById("btn-close-cart");
+    const cartItemsContainer = document.getElementById("cart-items-container");
+    const cartTotalCount = document.getElementById("cart-total-count");
+    const cartTotalPrice = document.getElementById("cart-total-price");
+    const btnClearCartAll = document.getElementById("btn-clear-cart-all");
+    const cartBadgeCount = document.getElementById("cart-badge-count");
 
     // Theme Switcher elements
     const btnThemeToggle = document.getElementById("theme-toggle-btn");
@@ -505,6 +511,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             compileMetadata();
             initializeFilterUI();
+            updateCartUI();
             renderCategoryHomepage();
             // Don't call applyFiltersAndSorting here — homepage is shown first
 
@@ -1045,7 +1052,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const pageItems = filteredProducts.slice(startIndex, endIndex);
 
         pageItems.forEach((product, index) => {
-            const isCompared = comparedProducts.some(p => p.URL === product.URL);
+            const isInCart = cartProducts.some(p => p.URL === product.URL);
 
             // Clean up Name formatting
             let cardTitle = product["Full Name"];
@@ -1146,8 +1153,8 @@ document.addEventListener("DOMContentLoaded", () => {
                             <a href="${product.URL}" target="_blank" class="btn-card-action btn-card-visit">
                                 <i class="fa-solid fa-arrow-up-right-from-square"></i> Visit Store
                             </a>
-                            <button class="btn-card-action btn-card-compare ${isCompared ? "active" : ""}" data-index="${startIndex + index}" title="Compare this item">
-                                <i class="fa-solid ${isCompared ? "fa-circle-check" : "fa-scale-balanced"}"></i>
+                            <button class="btn-card-action btn-card-cart ${isInCart ? "active" : ""}" data-index="${startIndex + index}" title="${isInCart ? 'Remove from Cart' : 'Add to Cart'}">
+                                <i class="fa-solid ${isInCart ? "fa-cart-shopping" : "fa-cart-plus"}"></i>
                             </button>
                         </div>
                     </div>
@@ -1157,13 +1164,13 @@ document.addEventListener("DOMContentLoaded", () => {
             gridContainer.insertAdjacentHTML("beforeend", cardHTML);
         });
 
-        // Add compare toggle click handlers
-        const compareBtns = gridContainer.querySelectorAll(".btn-card-compare");
-        compareBtns.forEach(btn => {
+        // Add cart toggle click handlers
+        const cartBtns = gridContainer.querySelectorAll(".btn-card-cart");
+        cartBtns.forEach(btn => {
             btn.addEventListener("click", () => {
                 const productIndex = parseInt(btn.getAttribute("data-index"));
                 const product = filteredProducts[productIndex];
-                toggleCompareProduct(product, btn);
+                toggleCartProduct(product, btn);
             });
         });
 
@@ -1235,218 +1242,140 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ================= 4. COMPARISON TRAY & MODAL LOGIC =================
-    function toggleCompareProduct(product, btnElement) {
-        const existingIdx = comparedProducts.findIndex(p => p.URL === product.URL);
+    function toggleCartProduct(product, btnElement) {
+        const existingIdx = cartProducts.findIndex(p => p.URL === product.URL);
 
         if (existingIdx > -1) {
-            // Already inside comparison tray, remove it
-            comparedProducts.splice(existingIdx, 1);
+            // Remove from cart
+            cartProducts.splice(existingIdx, 1);
             if (btnElement) btnElement.classList.remove("active");
-            showNotification(`Removed component from comparison list.`);
+            showNotification(`Removed item from cart.`);
         } else {
-            // Add to comparison tray
-            if (comparedProducts.length >= 3) {
-                showNotification("⚠️ Maximum comparison reached! Clear items first.", "error");
-                return;
-            }
-            comparedProducts.push(product);
+            // Add to cart
+            cartProducts.push(product);
             if (btnElement) btnElement.classList.add("active");
-            showNotification(`Added '${product["Full Name"].substring(0, 30)}...' to comparison tray.`);
+            showNotification(`Added '${product["Full Name"].substring(0, 30)}...' to cart.`);
         }
 
-        updateCompareTrayUI();
+        // Save to localStorage
+        try {
+            localStorage.setItem("priceWebCart", JSON.stringify(cartProducts));
+        } catch (e) {
+            console.error("Failed to save cart to localStorage", e);
+        }
+
+        updateCartUI();
     }
 
-    function updateCompareTrayUI() {
-        compareCountBadge.textContent = comparedProducts.length;
+    function updateCartUI() {
+        // Update badge counts
+        if (cartBadgeCount) cartBadgeCount.textContent = cartProducts.length;
+        if (cartTotalCount) cartTotalCount.textContent = cartProducts.length;
 
-        // Empty compare Slots container
-        compareSlots.innerHTML = "";
+        // Render items inside the cart drawer
+        if (!cartItemsContainer) return;
+        cartItemsContainer.innerHTML = "";
 
-        for (let i = 0; i < 3; i++) {
-            const product = comparedProducts[i];
-            const slot = document.createElement("div");
-
-            if (product) {
-                slot.className = "compare-slot filled";
-
-                let storeLabelClass = "badge-igeek";
-                if (product["Website Name"] === "City Center") storeLabelClass = "badge-citycenter";
-                else if (product["Website Name"] === "Oriental Store") storeLabelClass = "badge-osjo";
-                else if (product["Website Name"] === "PC Circle") storeLabelClass = "badge-pccircle";
-                else if (product["Website Name"] === "Taipei Computer") storeLabelClass = "badge-taipei";
-                else if (product["Website Name"] === "MCC Jordan") storeLabelClass = "badge-mcc";
-                else if (product["Website Name"] === "Game On Jordan") storeLabelClass = "badge-gameon";
-
-                slot.innerHTML = `
-                    <div class="slot-filled-content">
-                        <span class="slot-title" title="${product["Full Name"]}">${product["Full Name"]}</span>
-                        <div class="slot-meta">
-                            <span class="slot-store ${storeLabelClass}">${product["Website Name"]}</span>
-                            <span class="slot-price">${product.Price}</span>
-                        </div>
-                    </div>
-                    <button class="btn-remove-slot" data-index="${i}"><i class="fa-solid fa-xmark"></i></button>
-                `;
-
-                slot.querySelector(".btn-remove-slot").addEventListener("click", (e) => {
-                    e.stopPropagation();
-                    comparedProducts.splice(i, 1);
-                    updateCompareTrayUI();
-                    renderProductsCatalog(); // Refresh grids active classes
-                });
-
-            } else {
-                slot.className = "compare-slot";
-                slot.innerHTML = `
-                    <div class="slot-empty-text">
-                        <i class="fa-solid fa-circle-plus"></i> Slot ${i + 1}
-                    </div>
-                `;
-            }
-
-            compareSlots.appendChild(slot);
+        if (cartProducts.length === 0) {
+            cartItemsContainer.innerHTML = `
+                <div class="cart-empty-state">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <h3>Your Cart is Empty</h3>
+                    <p>Browse products and add them to your cart to keep track of them here.</p>
+                </div>
+            `;
+            if (cartTotalPrice) cartTotalPrice.textContent = "0.00 JOD";
+            if (btnClearCartAll) btnClearCartAll.setAttribute("disabled", "true");
+            return;
         }
 
-        // Slide up / Open comparison tray if at least 1 item is added
-        if (comparedProducts.length > 0) {
-            compareTray.classList.add("open");
-        } else {
-            compareTray.classList.remove("open");
-        }
+        if (btnClearCartAll) btnClearCartAll.removeAttribute("disabled");
 
-        // Enable or disable Compare button
-        if (comparedProducts.length >= 2) {
-            btnTriggerCompare.removeAttribute("disabled");
-        } else {
-            btnTriggerCompare.setAttribute("disabled", "true");
-        }
-    }
+        let totalPrice = 0;
 
-    function openCompareModal() {
-        if (comparedProducts.length < 2) return;
+        cartProducts.forEach((product, idx) => {
+            totalPrice += parseFloat(product.price_val || 0);
 
-        // Clean table columns except the first label cells
-        const headerRow = document.getElementById("compare-row-headers");
-        const imageRow = document.getElementById("compare-row-image");
-        const storeRow = document.getElementById("compare-row-store");
-        const categoryRow = document.getElementById("compare-row-category");
-        const nameRow = document.getElementById("compare-row-name");
-        const priceRow = document.getElementById("compare-row-price");
-        const sizeRow = document.getElementById("compare-row-size");
-        const hzRow = document.getElementById("compare-row-hz");
-        const msRow = document.getElementById("compare-row-ms");
-        const armsRow = document.getElementById("compare-row-arms");
-        const weightRow = document.getElementById("compare-row-weight");
-        const statusRow = document.getElementById("compare-row-status");
-        const actionRow = document.getElementById("compare-row-action");
+            let storeLabelClass = "badge-igeek";
+            if (product["Website Name"] === "City Center") storeLabelClass = "badge-citycenter";
+            else if (product["Website Name"] === "Oriental Store") storeLabelClass = "badge-osjo";
+            else if (product["Website Name"] === "PC Circle") storeLabelClass = "badge-pccircle";
+            else if (product["Website Name"] === "Taipei Computer") storeLabelClass = "badge-taipei";
+            else if (product["Website Name"] === "MCC Jordan") storeLabelClass = "badge-mcc";
+            else if (product["Website Name"] === "Game On Jordan") storeLabelClass = "badge-gameon";
 
-        headerRow.innerHTML = '<th class="attr-header">Attributes</th>';
-        imageRow.innerHTML = '<td class="attr-label">Product Image</td>';
-        storeRow.innerHTML = '<td class="attr-label">Store Origin</td>';
-        categoryRow.innerHTML = '<td class="attr-label">Category</td>';
-        nameRow.innerHTML = '<td class="attr-label">Product Name</td>';
-        priceRow.innerHTML = '<td class="attr-label">Price (JOD)</td>';
-        sizeRow.innerHTML = '<td class="attr-label">Screen Size (Inches)</td>';
-        hzRow.innerHTML = '<td class="attr-label">Refresh Rate (Hz)</td>';
-        msRow.innerHTML = '<td class="attr-label">Response Time (ms)</td>';
-        armsRow.innerHTML = '<td class="attr-label">Arms Supported</td>';
-        weightRow.innerHTML = '<td class="attr-label">Weight Capacity (kg)</td>';
-        statusRow.innerHTML = '<td class="attr-label">Stock Status</td>';
-        actionRow.innerHTML = '<td class="attr-label">Store Page</td>';
-
-        comparedProducts.forEach(item => {
-            // Store badge class
-            let storeBadge = "badge-igeek";
-            if (item["Website Name"] === "City Center") storeBadge = "badge-citycenter";
-            else if (item["Website Name"] === "Oriental Store") storeBadge = "badge-osjo";
-            else if (item["Website Name"] === "PC Circle") storeBadge = "badge-pccircle";
-            else if (item["Website Name"] === "Taipei Computer") storeBadge = "badge-taipei";
-            else if (item["Website Name"] === "MCC Jordan") storeBadge = "badge-mcc";
-            else if (item["Website Name"] === "Game On Jordan") storeBadge = "badge-gameon";
-
-            const isOutOfStock = item.Status === "Out of Stock";
-            const isComingSoon = item.Status === "Coming Soon";
-
-            // Image cell injection
-            let compareImageHTML = "";
-            if (item["Image URL"]) {
-                compareImageHTML = `
-                    <div class="compare-image-wrapper">
-                        <img class="compare-image" src="${item["Image URL"]}" alt="${item["Full Name"]}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="compare-image-fallback" style="display:none;">
-                            <i class="fa-solid ${CATEGORY_MAP[item.category_key]?.icon || 'fa-desktop'} fallback-icon"></i>
+            const itemHTML = `
+                <div class="cart-item-card">
+                    <div class="cart-item-image-wrapper">
+                        ${product["Image URL"] ? `
+                            <img class="cart-item-image" src="${product["Image URL"]}" alt="${product["Full Name"]}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        ` : ''}
+                        <div class="cart-item-image-fallback" style="${product["Image URL"] ? 'display: none;' : 'display: flex;'}">
+                            <i class="fa-solid ${CATEGORY_MAP[product.category_key]?.icon || 'fa-microchip'}"></i>
                         </div>
                     </div>
-                `;
-            } else {
-                compareImageHTML = `
-                    <div class="compare-image-wrapper">
-                        <div class="compare-image-fallback">
-                            <i class="fa-solid ${CATEGORY_MAP[item.category_key]?.icon || 'fa-desktop'} fallback-icon"></i>
+                    <div class="cart-item-info">
+                        <!-- Full product name displayed -->
+                        <span class="cart-item-name" title="${product["Full Name"]}">${product["Full Name"]}</span>
+                        <div class="cart-item-meta">
+                            <span class="cart-item-store ${storeLabelClass}">${product["Website Name"]}</span>
+                            <span class="cart-item-price">${product.Price || (product.price_val + " JOD")}</span>
                         </div>
                     </div>
-                `;
-            }
+                    <button class="btn-remove-cart-item" data-index="${idx}" title="Remove item">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </div>
+            `;
 
-            headerRow.insertAdjacentHTML("beforeend", `<th class="compare-col-header">${item["Full Name"].substring(0, 40)}...</th>`);
-            imageRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell cell-image-cell">${compareImageHTML}</td>`);
-            storeRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell"><span class="card-store-badge ${storeBadge}">${item["Website Name"]}</span></td>`);
-            categoryRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell" style="font-weight:600;">${item.category_key}</td>`);
-            nameRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell" style="font-size:0.85rem;text-align:left;">${item["Full Name"]}</td>`);
-            priceRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell cell-price">${item.Price}</td>`);
-
-            // Specialized specifications cells
-            sizeRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell">${item.screen_size ? item.screen_size + '"' : 'N/A'}</td>`);
-            hzRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell">${item.refresh_rate ? item.refresh_rate + 'Hz' : 'N/A'}</td>`);
-            msRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell">${item.response_time ? item.response_time + 'ms' : 'N/A'}</td>`);
-
-            let armsLabel = 'N/A';
-            if (item.arms_supported) {
-                armsLabel = item.arms_supported === 1 ? "1 (Single)" : item.arms_supported === 2 ? "2 (Dual)" : item.arms_supported === 3 ? "3 (Triple)" : item.arms_supported;
-            }
-            armsRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell">${armsLabel}</td>`);
-            weightRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell">${item.weight_support ? (String(item.weight_support).toLowerCase().includes('kg') ? item.weight_support : item.weight_support + ' kg') : 'N/A'}</td>`);
-
-            let statusTextClass = "stock-text-in";
-            let statusIconClass = "fa-circle-check";
-            if (isOutOfStock) {
-                statusTextClass = "stock-text-out";
-                statusIconClass = "fa-circle-xmark";
-            } else if (isComingSoon) {
-                statusTextClass = "stock-text-coming";
-                statusIconClass = "fa-circle-question";
-            }
-
-            statusRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell">
-                <span class="${statusTextClass}">
-                    <i class="fa-solid ${statusIconClass}"></i> ${item.Status}
-                </span>
-            </td>`);
-            actionRow.insertAdjacentHTML("beforeend", `<td class="compare-item-cell cell-action">
-                <a href="${item.URL}" target="_blank" class="btn-modal-visit">
-                    <i class="fa-solid fa-shopping-cart"></i> View Page
-                </a>
-            </td>`);
+            cartItemsContainer.insertAdjacentHTML("beforeend", itemHTML);
         });
 
-        compareModal.classList.add("open");
+        if (cartTotalPrice) cartTotalPrice.textContent = `${totalPrice.toFixed(2)} JOD`;
+
+        // Add click handlers for cart remove buttons
+        const removeButtons = cartItemsContainer.querySelectorAll(".btn-remove-cart-item");
+        removeButtons.forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const itemIndex = parseInt(btn.getAttribute("data-index"));
+                cartProducts.splice(itemIndex, 1);
+                try {
+                    localStorage.setItem("priceWebCart", JSON.stringify(cartProducts));
+                } catch (e) {
+                    console.error("Failed to save cart to localStorage", e);
+                }
+                updateCartUI();
+                renderProductsCatalog(); // Refresh catalog grid state active classes
+            });
+        });
     }
 
     // ================= 5. EVENT LISTENERS =================
 
-    // Toggle Compare Tray manually clicking header
-    compareTrayToggle.addEventListener("click", () => {
-        if (comparedProducts.length === 0) return;
+    // Toggle Cart Drawer manually clicking cart icon in header
+    if (cartToggleBtn) {
+        cartToggleBtn.addEventListener("click", () => {
+            cartDrawer.classList.toggle("open");
+            cartDrawerOverlay.classList.toggle("open");
+        });
+    }
 
-        if (compareTray.style.bottom === "0px" || compareTray.classList.contains("open")) {
-            compareTray.classList.remove("open");
-            trayChevron.className = "fa-solid fa-chevron-up";
-        } else {
-            compareTray.classList.add("open");
-            trayChevron.className = "fa-solid fa-chevron-down";
-        }
-    });
+    // Close Cart Drawer via close button
+    if (btnCloseCart) {
+        btnCloseCart.addEventListener("click", () => {
+            cartDrawer.classList.remove("open");
+            cartDrawerOverlay.classList.remove("open");
+        });
+    }
+
+    // Close Cart Drawer clicking overlay backdrop
+    if (cartDrawerOverlay) {
+        cartDrawerOverlay.addEventListener("click", () => {
+            cartDrawer.classList.remove("open");
+            cartDrawerOverlay.classList.remove("open");
+        });
+    }
 
     // Back to Categories button
     if (btnBackCategories) {
@@ -1563,24 +1492,20 @@ document.addEventListener("DOMContentLoaded", () => {
         applyFiltersAndSorting();
     });
 
-    // Compare Triggers
-    btnTriggerCompare.addEventListener("click", openCompareModal);
-    btnClearCompareAll.addEventListener("click", () => {
-        comparedProducts = [];
-        updateCompareTrayUI();
-        renderProductsCatalog();
-        showNotification("Cleared comparison slots.");
-    });
-
-    // Close Compare modal
-    btnCloseCompareModal.addEventListener("click", () => {
-        compareModal.classList.remove("open");
-    });
-    compareModal.addEventListener("click", (e) => {
-        if (e.target === compareModal) {
-            compareModal.classList.remove("open");
-        }
-    });
+    // Clear Cart Trigger
+    if (btnClearCartAll) {
+        btnClearCartAll.addEventListener("click", () => {
+            cartProducts = [];
+            try {
+                localStorage.setItem("priceWebCart", JSON.stringify(cartProducts));
+            } catch (e) {
+                console.error("Failed to save cart to localStorage", e);
+            }
+            updateCartUI();
+            renderProductsCatalog();
+            showNotification("Cleared all items from cart.");
+        });
+    }
 
     // Helper functions
     function updateSliderTrack() {
