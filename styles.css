@@ -474,7 +474,7 @@ body.dark-theme .header-stats-bar {
     font-size: 0.75rem;
     font-weight: 600;
     color: var(--text-secondary);
-    cursor: default;
+    cursor: pointer;
     transition: all var(--transition-fast);
     white-space: nowrap;
 }
@@ -485,10 +485,12 @@ body.dark-theme .stat-badge {
     color: var(--text-primary);
 }
 
-.stat-badge:hover {
+.stat-badge:hover,
+.stat-badge.active-stat-badge {
     border-color: var(--orange);
     color: var(--text-primary);
-    box-shadow: var(--shadow-xs);
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.18);
+    transform: translateY(-1px);
 }
 
 .stat-num {
@@ -1272,9 +1274,9 @@ body.dark-theme #search-input {
 }
 
 .btn-category.active {
-    background: var(--orange-light);
-    border-color: var(--orange);
-    color: var(--orange);
+    background: color-mix(in srgb, var(--cat-color, var(--orange)) 10%, var(--bg-white));
+    border-color: var(--cat-color, var(--orange));
+    color: var(--cat-color, var(--orange));
     font-weight: 600;
 }
 
@@ -1283,7 +1285,9 @@ body.dark-theme .btn-category {
 }
 
 body.dark-theme .btn-category.active {
-    background: rgba(249, 115, 22, 0.1);
+    background: color-mix(in srgb, var(--cat-color, var(--orange)) 15%, transparent);
+    border-color: var(--cat-color, var(--orange));
+    color: var(--cat-color, var(--orange));
 }
 
 /* ---- Price Range Slider ---- */

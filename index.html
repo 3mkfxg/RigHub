@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PRICEWEB — Jordan PC Components & Electronics Comparator</title>
+    <!-- Favicon (SVG base64 of FontAwesome fa-microchip, styled to match theme colors dynamically) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNTEyIDUxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8c3R5bGU+CiAgICBwYXRoIHsKICAgICAgZmlsbDogI2Y5NzMxNjsKICAgIH0KICAgIEBtZWRpYSAocHJlZmVycy1jb2xvci1zY2hlbWU6IGRhcmspIHsKICAgICAgcGF0aCB7CiAgICAgICAgZmlsbDogIzAwZmZjYzsKICAgICAgfQogICAgfQogIDwvc3R5bGU+CiAgPHBhdGggZD0iTTQxNiA0OHY0MTZjMCAyNi41MS0yMS40OSA0OC00OCA0OEgxNDRjLTI2LjUxIDAtNDgtMjEuNDktNDgtNDhWNDhjMC0yNi41MSAyMS40OS00OCA0OC00OGgyMjRjMjYuNTEgMCA0OCAyMS40OSA0OCA0OHptOTYgNTh2MTJhNiA2IDAgMCAxLTYgNmgtMTh2NmE2IDYgMCAwIDEtNiA2aC00MlY4OGg0MmE2IDYgMCAwIDEgNiA2djZoMThhNiA2IDAgMCAxIDYgNnptMCA5NnYxMmE2IDYgMCAwIDEtNiA2aC0xOHY2YTYgNiAwIDAgMS02IDZoLTQydi00OGg0MmE2IDYgMCAwIDEgNiA2djZoMThhNiA2IDAgMCAxIDYgNnptMCA5NnYxMmE2IDYgMCAwIDEtNiA2aC0xOHY2YTYgNiAwIDAgMS02IDZoLTQydi00OGg0MmE2IDYgMCAwIDEgNiA2djZoMThhNiA2IDAgMCAxIDYgNnptMCA5NnYxMmE2IDYgMCAwIDEtNiA2aC0xOHY2YTYgNiAwIDAgMS02IDZoLTQydi00OGg0MmE2IDYgMCAwIDEgNiA2djZoMThhNiA2IDAgMCAxIDYgNnpNOTYgMTA2di0xMmE2IDYgMCAwIDAtNi02SDcydi02YTYgNiAwIDAgMC02LTZIMjR2NDhoNDJhNiA2IDAgMCAwIDYtNnYtNmgxOGE2IDYgMCAwIDAgNi02em0wIDk2di0xMmE2IDYgMCAwIDAtNi02SDcydi02YTYgNiAwIDAgMC02LTZIMjR2NDhoNDJhNiA2IDAgMCAwIDYtNnYtNmgxOGE2IDYgMCAwIDAgNi02em0wIDk2di0xMmE2IDYgMCAwIDAtNi02SDcydi02YTYgNiAwIDAgMC02LTZIMjR2NDhoNDJhNiA2IDAgMCAwIDYtNnYtNmgxOGE2IDYgMCAwIDAgNi02em0wIDk2di0xMmE2IDYgMCAwIDAtNi02SDcydi02YTYgNiAwIDAgMC02LTZIMjR2NDhoNDJhNiA2IDAgMCAwIDYtNnYtNmgxOGE2IDYgMCAwIDAgNi02eiIvPgo8L3N2Zz4=">
     <meta name="description"
         content="Compare PC components, monitors, peripherals and accessories from Jordan's top tech stores — iGeek.jo, City Center, Oriental Store, PC Circle, Taipei Computer, MCC Jordan and Game On.">
     <!-- Google Fonts -->
@@ -18,6 +20,7 @@
     <!-- App Stylesheet -->
     <link rel="stylesheet" href="styles.css?v=1.1.0">
 </head>
+
 <body class="dark-theme">
 
     <!-- ====================== STICKY HEADER ====================== -->
@@ -93,35 +96,35 @@
     <div class="header-stats-bar" id="stats-bar">
         <div class="stats-bar-inner">
             <span class="stats-bar-label">Products:</span>
-            <div class="stat-badge stat-badge-total">
+            <div class="stat-badge stat-badge-total" title="Show all stores">
                 <span class="stat-num" id="stat-total-products">0</span>
                 <span>Total</span>
             </div>
-            <div class="stat-badge store-igeek">
+            <div class="stat-badge store-igeek" data-store="iGeek.jo" title="Filter by iGeek.jo">
                 <span class="stat-num" id="stat-igeek-count">0</span>
                 <span>iGeek.jo</span>
             </div>
-            <div class="stat-badge store-citycenter">
+            <div class="stat-badge store-citycenter" data-store="City Center" title="Filter by City Center">
                 <span class="stat-num" id="stat-city-count">0</span>
                 <span>City Center</span>
             </div>
-            <div class="stat-badge store-osjo">
+            <div class="stat-badge store-osjo" data-store="Oriental Store" title="Filter by Oriental Store">
                 <span class="stat-num" id="stat-osjo-count">0</span>
                 <span>Oriental Store</span>
             </div>
-            <div class="stat-badge store-pccircle">
+            <div class="stat-badge store-pccircle" data-store="PC Circle" title="Filter by PC Circle">
                 <span class="stat-num" id="stat-pccircle-count">0</span>
                 <span>PC Circle</span>
             </div>
-            <div class="stat-badge store-taipei">
+            <div class="stat-badge store-taipei" data-store="Taipei Computer" title="Filter by Taipei Computer">
                 <span class="stat-num" id="stat-taipei-count">0</span>
                 <span>Taipei</span>
             </div>
-            <div class="stat-badge store-mcc">
+            <div class="stat-badge store-mcc" data-store="MCC Jordan" title="Filter by MCC Jordan">
                 <span class="stat-num" id="stat-mcc-count">0</span>
                 <span>MCC Jordan</span>
             </div>
-            <div class="stat-badge store-gameon">
+            <div class="stat-badge store-gameon" data-store="Game On Jordan" title="Filter by Game On Jordan">
                 <span class="stat-num" id="stat-gameon-count">0</span>
                 <span>Game On</span>
             </div>
@@ -132,7 +135,7 @@
     <div class="app-container">
 
         <!-- ================= CATEGORY HOMEPAGE ================= -->
-        <section class="category-homepage" id="category-homepage">
+        <section class="category-homepage" id="category-homepage" style="display:none;">
             <div class="cat-home-header">
                 <div>
                     <h2 class="cat-home-title">
@@ -148,7 +151,7 @@
         </section>
 
         <!-- ================= CATALOG MAIN LAYOUT ================= -->
-        <main class="main-layout" id="main-layout" style="display:none;">
+        <main class="main-layout" id="main-layout">
 
             <!-- LEFT: Filter Sidebar -->
             <aside class="filter-sidebar">
@@ -165,6 +168,48 @@
                     <label class="group-label">Category</label>
                     <div class="category-grid" id="category-filter-list">
                         <!-- Filled dynamically by JS -->
+                    </div>
+                </div>
+
+                <!-- wesam's Filter system -->
+                <div class="filter-group">
+                    <label class="group-label">Stores</label>
+                    <div class="checkbox-list" id="store-filter-list">
+                        <label class="custom-checkbox igeek-check">
+                            <input type="checkbox" class="store-filter" value="iGeek.jo" checked>
+                            <span class="checkmark"></span>
+                            <span class="toggle-label-text">iGeek.jo</span>
+                        </label>
+                        <label class="custom-checkbox citycenter-check">
+                            <input type="checkbox" class="store-filter" value="City Center" checked>
+                            <span class="checkmark"></span>
+                            <span class="toggle-label-text">City Center</span>
+                        </label>
+                        <label class="custom-checkbox osjo-check">
+                            <input type="checkbox" class="store-filter" value="Oriental Store" checked>
+                            <span class="checkmark"></span>
+                            <span class="toggle-label-text">Oriental Store</span>
+                        </label>
+                        <label class="custom-checkbox pccircle-check">
+                            <input type="checkbox" class="store-filter" value="PC Circle" checked>
+                            <span class="checkmark"></span>
+                            <span class="toggle-label-text">PC Circle</span>
+                        </label>
+                        <label class="custom-checkbox taipei-check">
+                            <input type="checkbox" class="store-filter" value="Taipei Computer" checked>
+                            <span class="checkmark"></span>
+                            <span class="toggle-label-text">Taipei Computer</span>
+                        </label>
+                        <label class="custom-checkbox mcc-check">
+                            <input type="checkbox" class="store-filter" value="MCC Jordan" checked>
+                            <span class="checkmark"></span>
+                            <span class="toggle-label-text">MCC Jordan</span>
+                        </label>
+                        <label class="custom-checkbox gameon-check">
+                            <input type="checkbox" class="store-filter" value="Game On Jordan" checked>
+                            <span class="checkmark"></span>
+                            <span class="toggle-label-text">Game On Jordan</span>
+                        </label>
                     </div>
                 </div>
 
@@ -219,9 +264,6 @@
 
                 <!-- Back Button & Breadcrumb -->
                 <div class="back-bar">
-                    <button class="btn-back-categories" id="btn-back-categories">
-                        <i class="fa-solid fa-arrow-left"></i> All Categories
-                    </button>
                     <span class="browsing-label" id="browsing-label"></span>
                 </div>
 

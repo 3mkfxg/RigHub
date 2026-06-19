@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     let currentPage = 1;
-    const itemsPerPage = 12;
+    const itemsPerPage = 48;
 
     let selectedCategory = "all";
     let selectedStores = ["iGeek.jo", "City Center", "Oriental Store", "PC Circle", "Taipei Computer", "MCC Jordan", "Game On Jordan"];
@@ -512,8 +512,8 @@ document.addEventListener("DOMContentLoaded", () => {
             compileMetadata();
             initializeFilterUI();
             updateCartUI();
-            renderCategoryHomepage();
-            // Don't call applyFiltersAndSorting here — homepage is shown first
+            goToCategory("all"); // Immediately load the catalog page with all items and filters active
+
 
 
         } catch (error) {
@@ -584,16 +584,16 @@ document.addEventListener("DOMContentLoaded", () => {
     function initializeFilterUI() {
         // 1. Dynamic category grid injection
         let categoryGridHTML = `
-            <button class="btn-category active" data-category="all">
-                <i class="fa-solid fa-border-all"></i> All Parts
+            <button class="btn-category active" data-category="all" style="--cat-color: var(--orange)">
+                <i class="fa-solid fa-border-all" style="color: var(--orange)"></i> All Parts
             </button>
         `;
 
         Object.keys(CATEGORY_MAP).forEach(key => {
             const cat = CATEGORY_MAP[key];
             categoryGridHTML += `
-                <button class="btn-category" data-category="${key}">
-                    <i class="fa-solid ${cat.icon}"></i> ${cat.label}
+                <button class="btn-category" data-category="${key}" style="--cat-color: ${cat.color}">
+                    <i class="fa-solid ${cat.icon}" style="color: ${cat.color}"></i> ${cat.label}
                 </button>
             `;
         });
@@ -1051,6 +1051,16 @@ document.addEventListener("DOMContentLoaded", () => {
         const endIndex = Math.min(startIndex + itemsPerPage, filteredProducts.length);
         const pageItems = filteredProducts.slice(startIndex, endIndex);
 
+        if (resultsCountText) {
+            if (filteredProducts.length === 0) {
+                resultsCountText.innerHTML = `Found <span style="color:var(--neon-cyan);">0</span> components`;
+            } else if (itemsPerPage >= filteredProducts.length) {
+                resultsCountText.innerHTML = `Showing all <span style="color:var(--neon-cyan);">${filteredProducts.length}</span> components`;
+            } else {
+                resultsCountText.innerHTML = `Showing <span style="color:var(--neon-cyan);">${startIndex + 1}-${endIndex}</span> of <span style="color:var(--neon-cyan);">${filteredProducts.length}</span> components`;
+            }
+        }
+
         pageItems.forEach((product, index) => {
             const isInCart = cartProducts.some(p => p.URL === product.URL);
 
@@ -1412,12 +1422,61 @@ document.addEventListener("DOMContentLoaded", () => {
         const specGroup = document.getElementById("spec-filter-group");
         if (specGroup) specGroup.style.display = "none";
 
+        // Reset Store filters
+        selectedStores = ["iGeek.jo", "City Center", "Oriental Store", "PC Circle", "Taipei Computer", "MCC Jordan", "Game On Jordan"];
+        storeFilters.forEach(cb => {
+            cb.checked = true;
+        });
+
+        // Clear active stats badges styling
+        document.querySelectorAll("#stats-bar .stat-badge").forEach(b => b.classList.remove("active-stat-badge"));
+
         currentPage = 1;
         applyFiltersAndSorting();
         showNotification("Filters have been completely reset.");
     });
 
-    // Store Checkbox filters — no longer in sidebar, all stores always active
+    // Store Checkbox filters
+    storeFilters.forEach(cb => {
+        cb.addEventListener("change", () => {
+            selectedStores = Array.from(storeFilters)
+                .filter(c => c.checked)
+                .map(c => c.value);
+            currentPage = 1;
+            applyFiltersAndSorting();
+            
+            // Clear top stats badges active styling since user is manually toggling checkboxes
+            document.querySelectorAll("#stats-bar .stat-badge").forEach(b => b.classList.remove("active-stat-badge"));
+        });
+    });
+
+    // Clickable Stats Badges at the top of the page
+    const statBadges = document.querySelectorAll("#stats-bar .stat-badge");
+    statBadges.forEach(badge => {
+        badge.addEventListener("click", () => {
+            const targetStore = badge.getAttribute("data-store");
+            
+            // Remove active feedback from all badges
+            statBadges.forEach(b => b.classList.remove("active-stat-badge"));
+            
+            if (targetStore) {
+                // Select only this store
+                selectedStores = [targetStore];
+                storeFilters.forEach(cb => {
+                    cb.checked = (cb.value === targetStore);
+                });
+                badge.classList.add("active-stat-badge");
+            } else {
+                // "Total" badge clicked: select all stores
+                selectedStores = ["iGeek.jo", "City Center", "Oriental Store", "PC Circle", "Taipei Computer", "MCC Jordan", "Game On Jordan"];
+                storeFilters.forEach(cb => {
+                    cb.checked = true;
+                });
+            }
+            currentPage = 1;
+            applyFiltersAndSorting();
+        });
+    });
 
 
     // Stock toggle clicking
