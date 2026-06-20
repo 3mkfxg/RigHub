@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let filteredProducts = [];
     let cartProducts = [];
     try {
-        const storedCart = localStorage.getItem("priceWebCart");
+        const storedCart = localStorage.getItem("rigHubCart");
         if (storedCart) {
             cartProducts = JSON.parse(storedCart);
         }
@@ -452,9 +452,15 @@ document.addEventListener("DOMContentLoaded", () => {
         headerSearchBar.addEventListener("input", () => {
             clearTimeout(headerTypingTimer);
             searchQuery = headerSearchBar.value.trim();
-            // If we are on the homepage and user types, jump to All category
-            if (searchQuery.length > 0 && catHomepage.style.display !== "none") {
-                goToCategory("all");
+            // If details view or homepage is open and user types, jump to All category catalog
+            if (searchQuery.length > 0) {
+                const detailsView = document.getElementById("product-details-view");
+                if (detailsView && detailsView.style.display !== "none") {
+                    hideProductDetail();
+                }
+                if (catHomepage.style.display !== "none") {
+                    goToCategory("all");
+                }
             }
             headerTypingTimer = setTimeout(() => {
                 currentPage = 1;
@@ -485,7 +491,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const sheetData = await response.json();
 
             // Clean up fields and parse prices
-            allProducts = sheetData.map(p => {
+            allProducts = sheetData.map((p, idx) => {
                 // Default missing structural fields
                 if (!p["Component Type"]) p["Component Type"] = "Unknown";
                 if (!p["Status"]) p["Status"] = "In Stock";
@@ -504,6 +510,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else {
                     p.category_key = "Unknown";
                 }
+                p.itemId = idx + 1; // 1-based index
                 return p;
             });
 
@@ -512,7 +519,14 @@ document.addEventListener("DOMContentLoaded", () => {
             compileMetadata();
             initializeFilterUI();
             updateCartUI();
-            goToCategory("all"); // Immediately load the catalog page with all items and filters active
+            
+            // Check routing on load
+            const pathMatch = window.location.pathname.match(/\/item(\d+)\/?$/) || window.location.hash.match(/item(\d+)/);
+            if (pathMatch) {
+                checkUrlRoute();
+            } else {
+                goToCategory("all"); // Immediately load the catalog page with all items and filters active
+            }
 
 
 
@@ -861,6 +875,14 @@ document.addEventListener("DOMContentLoaded", () => {
         currentPage = 1;
         activeSpecFilters.clear();
 
+        // Hide details view if open
+        const detailsView = document.getElementById("product-details-view");
+        if (detailsView) detailsView.style.display = "none";
+        const statsBar = document.getElementById("stats-bar");
+        if (statsBar) statsBar.style.display = "";
+        const featureStrip = document.getElementById("feature-strip");
+        if (featureStrip) featureStrip.style.display = "";
+
         // Update sidebar category buttons
         const categoryButtons = document.querySelectorAll(".btn-category");
         categoryButtons.forEach(b => {
@@ -1117,7 +1139,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             const cardHTML = `
-                <div class="product-card ${storeClass} glass-panel">
+                <div class="product-card ${storeClass} glass-panel" data-product-idx="${startIndex + index}">
                     <div class="card-top">
                         <span class="card-store-badge ${storeBadge}">${product["Website Name"]}</span>
                         <span class="card-category-badge">${product.category_key}</span>
@@ -1269,7 +1291,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Save to localStorage
         try {
-            localStorage.setItem("priceWebCart", JSON.stringify(cartProducts));
+            localStorage.setItem("rigHubCart", JSON.stringify(cartProducts));
         } catch (e) {
             console.error("Failed to save cart to localStorage", e);
         }
@@ -1351,7 +1373,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const itemIndex = parseInt(btn.getAttribute("data-index"));
                 cartProducts.splice(itemIndex, 1);
                 try {
-                    localStorage.setItem("priceWebCart", JSON.stringify(cartProducts));
+                    localStorage.setItem("rigHubCart", JSON.stringify(cartProducts));
                 } catch (e) {
                     console.error("Failed to save cart to localStorage", e);
                 }
@@ -1390,6 +1412,28 @@ document.addEventListener("DOMContentLoaded", () => {
     // Back to Categories button
     if (btnBackCategories) {
         btnBackCategories.addEventListener("click", goBackToHomepage);
+    }
+
+    // Card clicks delegation to open product details view
+    if (gridContainer) {
+        gridContainer.addEventListener("click", (e) => {
+            const card = e.target.closest(".product-card");
+            if (!card) return;
+            
+            // If click is on cart/visit action buttons, ignore details view opening
+            if (e.target.closest(".btn-card-cart") || e.target.closest(".btn-card-visit")) {
+                return;
+            }
+            
+            const idxAttr = card.getAttribute("data-product-idx");
+            if (idxAttr !== null) {
+                const productIdx = parseInt(idxAttr);
+                const product = filteredProducts[productIdx];
+                if (product) {
+                    showProductDetail(product);
+                }
+            }
+        });
     }
 
     // Reset All filters button
@@ -1556,7 +1600,7 @@ document.addEventListener("DOMContentLoaded", () => {
         btnClearCartAll.addEventListener("click", () => {
             cartProducts = [];
             try {
-                localStorage.setItem("priceWebCart", JSON.stringify(cartProducts));
+                localStorage.setItem("rigHubCart", JSON.stringify(cartProducts));
             } catch (e) {
                 console.error("Failed to save cart to localStorage", e);
             }
@@ -1625,6 +1669,228 @@ document.addEventListener("DOMContentLoaded", () => {
             toast.style.transform = "translateX(20px)";
             setTimeout(() => toast.remove(), 300);
         }, 3200);
+    }
+
+    // Listen for history popstate and hash changes
+    window.addEventListener("popstate", checkUrlRoute);
+    window.addEventListener("hashchange", checkUrlRoute);
+
+    // ================= 6. PRODUCT DETAILS & ROUTING LOGIC =================
+    function showProductDetail(product) {
+        if (!product) return;
+        
+        const detailsView = document.getElementById("product-details-view");
+        if (!detailsView) return;
+
+        // Hide regular homepage/catalog panels and trust bars
+        catHomepage.style.display = "none";
+        mainLayout.style.display = "none";
+        detailsView.style.display = "block";
+
+        const statsBar = document.getElementById("stats-bar");
+        if (statsBar) statsBar.style.display = "none";
+        const featureStrip = document.getElementById("feature-strip");
+        if (featureStrip) featureStrip.style.display = "none";
+
+        // Determine stock colors
+        const isOutOfStock = product.Status === "Out of Stock";
+        const isComingSoon = product.Status === "Coming Soon";
+        let stockIndicatorClass = "in-stock";
+        if (isOutOfStock) stockIndicatorClass = "out-stock";
+        else if (isComingSoon) stockIndicatorClass = "coming-soon";
+
+        // Store badge class mapping
+        let storeBadge = "badge-igeek";
+        if (product["Website Name"] === "City Center") storeBadge = "badge-citycenter";
+        else if (product["Website Name"] === "Oriental Store") storeBadge = "badge-osjo";
+        else if (product["Website Name"] === "PC Circle") storeBadge = "badge-pccircle";
+        else if (product["Website Name"] === "Taipei Computer") storeBadge = "badge-taibei";
+        else if (product["Website Name"] === "MCC Jordan") storeBadge = "badge-mcc";
+        else if (product["Website Name"] === "Game On Jordan") storeBadge = "badge-gameon";
+
+        // Check if in cart
+        const isInCart = cartProducts.some(p => p.URL === product.URL);
+
+        // Spec items HTML
+        const specs = [];
+        specs.push({ name: "Category", value: product["Component Type"] });
+        specs.push({ name: "Store Origin", value: product["Website Name"] });
+        specs.push({ name: "Availability", value: product.Status });
+        if (product.screen_size) specs.push({ name: "Screen Size", value: `${product.screen_size}"` });
+        if (product.refresh_rate) specs.push({ name: "Refresh Rate", value: `${product.refresh_rate}Hz` });
+        if (product.response_time) specs.push({ name: "Response Time", value: `${product.response_time}ms` });
+        if (product.arms_supported) specs.push({ name: "Arms Supported", value: product.arms_supported === 1 ? 'Single Arm' : product.arms_supported === 2 ? 'Dual Arm' : product.arms_supported === 3 ? 'Triple Arm' : product.arms_supported });
+        if (product.weight_support) specs.push({ name: "Max Weight", value: `${String(product.weight_support).toLowerCase().includes('kg') ? product.weight_support : product.weight_support + 'kg'}` });
+
+        const specsHTML = specs.map(spec => `
+            <div class="details-spec-item">
+                <span class="details-spec-name">${spec.name}</span>
+                <span class="details-spec-value">${spec.value}</span>
+            </div>
+        `).join("");
+
+        const priceText = product.Price || `${product.price_val.toFixed(2)} JOD`;
+
+        detailsView.innerHTML = `
+            <div class="details-container">
+                <div class="details-back-bar">
+                    <button class="btn-back-to-catalog" id="btn-back-to-catalog">
+                        <i class="fa-solid fa-arrow-left"></i> Back to Catalog
+                    </button>
+                </div>
+
+                <div class="details-content-grid">
+                    <!-- Left: Image Column -->
+                    <div class="details-media-col glass-panel">
+                        <div class="details-image-wrapper">
+                            ${product["Image URL"] ? `
+                                <img class="details-image" src="${product["Image URL"]}" alt="${product["Full Name"]}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            ` : ''}
+                            <div class="details-image-fallback" style="${product["Image URL"] ? 'display: none;' : 'display: flex;'}">
+                                <i class="fa-solid ${CATEGORY_MAP[product.category_key]?.icon || 'fa-microchip'} fallback-icon"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Info Column -->
+                    <div class="details-info-col glass-panel">
+                        <div class="details-meta-row">
+                            <span class="details-store-badge ${storeBadge}">${product["Website Name"]}</span>
+                            <span class="details-category-badge">${product["Component Type"]}</span>
+                        </div>
+                        
+                        <h1 class="details-title">${product["Full Name"]}</h1>
+
+                        <div class="details-price-row">
+                            <span class="details-price-label">Best Price Found</span>
+                            <span class="details-price">${priceText}</span>
+                        </div>
+
+                        <div class="details-stock-row">
+                            <span class="details-stock-indicator ${stockIndicatorClass}"></span>
+                            <span class="details-stock-text ${stockIndicatorClass}">${product.Status}</span>
+                        </div>
+
+                        <div class="details-specs-container">
+                            <h3>Product Specifications</h3>
+                            <div class="details-specs-table">
+                                ${specsHTML}
+                            </div>
+                        </div>
+
+                        <!-- CTA Actions -->
+                        <div class="details-actions">
+                            <a href="${product.URL}" target="_blank" class="btn-details-visit">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i> Visit ${product["Website Name"]}
+                            </a>
+                            <button class="btn-details-cart ${isInCart ? 'active' : ''}" id="btn-details-cart-btn">
+                                <i class="fa-solid ${isInCart ? 'fa-cart-shopping' : 'fa-cart-plus'}"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Bind back button
+        document.getElementById("btn-back-to-catalog").addEventListener("click", () => {
+            hideProductDetail();
+        });
+
+        // Bind details cart toggle button
+        const detailsCartBtn = document.getElementById("btn-details-cart-btn");
+        if (detailsCartBtn) {
+            detailsCartBtn.addEventListener("click", () => {
+                toggleCartProduct(product, detailsCartBtn);
+                // Update icon inside the details cart button based on status
+                const isNowInCart = cartProducts.some(p => p.URL === product.URL);
+                if (isNowInCart) {
+                    detailsCartBtn.classList.add("active");
+                    detailsCartBtn.innerHTML = `<i class="fa-solid fa-cart-shopping"></i>`;
+                } else {
+                    detailsCartBtn.classList.remove("active");
+                    detailsCartBtn.innerHTML = `<i class="fa-solid fa-cart-plus"></i>`;
+                }
+                renderProductsCatalog(); // Sync background product catalog grid state active classes
+            });
+        }
+
+        // Update URL
+        updateUrlForItem(product.itemId);
+    }
+
+    function hideProductDetail() {
+        const detailsView = document.getElementById("product-details-view");
+        if (detailsView) detailsView.style.display = "none";
+
+        // Show regular components
+        mainLayout.style.display = "";
+
+        const statsBar = document.getElementById("stats-bar");
+        if (statsBar) statsBar.style.display = "";
+        const featureStrip = document.getElementById("feature-strip");
+        if (featureStrip) featureStrip.style.display = "";
+
+        // Reset URL pathname (back to /RigHub/ or /)
+        try {
+            let basePath = window.location.pathname;
+            const itemMatch = basePath.match(/\/item\d+\/?$/);
+            if (itemMatch) {
+                basePath = basePath.substring(0, basePath.lastIndexOf('/'));
+            }
+            if (!basePath.endsWith('/')) basePath += '/';
+            window.history.pushState(null, "", window.location.origin + basePath);
+        } catch (e) {
+            console.warn("history.pushState failed (expected on local file:// protocol)", e);
+            window.location.hash = "";
+        }
+    }
+
+    function updateUrlForItem(itemId) {
+        try {
+            let basePath = window.location.pathname;
+            const itemMatch = basePath.match(/\/item\d+\/?$/);
+            if (itemMatch) {
+                basePath = basePath.substring(0, basePath.lastIndexOf('/'));
+            }
+            if (!basePath.endsWith('/')) basePath += '/';
+            const newUrl = window.location.origin + basePath + 'item' + itemId;
+            window.history.pushState({ itemId: itemId }, "", newUrl);
+        } catch (e) {
+            console.warn("history.pushState failed (expected on local file:// protocol)", e);
+            window.location.hash = `item${itemId}`;
+        }
+    }
+
+    function checkUrlRoute() {
+        let itemId = null;
+        
+        // Check hash first
+        const hashMatch = window.location.hash.match(/item(\d+)/);
+        if (hashMatch) {
+            itemId = parseInt(hashMatch[1]);
+        } else {
+            // Check pathname
+            const pathMatch = window.location.pathname.match(/\/item(\d+)\/?$/);
+            if (pathMatch) {
+                itemId = parseInt(pathMatch[1]);
+            }
+        }
+        
+        if (itemId && allProducts && allProducts.length >= itemId) {
+            showProductDetail(allProducts[itemId - 1]);
+        } else {
+            // Hide detail view and load catalog
+            const detailsView = document.getElementById("product-details-view");
+            if (detailsView) detailsView.style.display = "none";
+
+            const statsBar = document.getElementById("stats-bar");
+            if (statsBar) statsBar.style.display = "";
+            const featureStrip = document.getElementById("feature-strip");
+            if (featureStrip) featureStrip.style.display = "";
+
+            goToCategory("all");
+        }
     }
 
     // RUN ON LOAD
